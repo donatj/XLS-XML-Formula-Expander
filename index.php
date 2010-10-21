@@ -8,12 +8,17 @@ foreach($Worksheets as $Worksheet) {
 	$row_index = 1;
 	$sheetname = $Worksheet->getAttribute( 'ss:Name' );
 	foreach ($rows as $row)	{
+		
+		$rind = $row->getAttribute( 'ss:Index' );
+		if ( $rind != null ) {
+			$row_index = $rind;
+		}
+		
 		$cells = $row->getElementsByTagName( 'Cell' );
 		$index = 1;
 		foreach( $cells as $cell ) {
-			$ind = $cell->getAttribute( 'ss:Index' );
-			if ( $ind != null ) {
-				//echo "Picked up a special index! Woo";
+			$cind = $cell->getAttribute( 'ss:Index' );
+			if ( $cind != null ) {
 				$index = $ind;
 			}
 
