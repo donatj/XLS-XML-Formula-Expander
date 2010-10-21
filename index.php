@@ -1,5 +1,5 @@
 <?
-$references = array();
+echo '<pre>';
 
 $dom = DOMDocument::load( 'tests.xml' );
 $Worksheets = $dom->getElementsByTagName( 'Worksheet' );
@@ -53,10 +53,15 @@ foreach( $spreadsheet_data as $sheetname => &$sheet ) {
 function expand_eq( $formula, $row_index, $col_index, $sheet ) {
 	//$expanded_formula = $formula;
 	global $spreadsheet_data;
-	preg_match_all('/(?<!:)(?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ]{1,})\'!|)R\[?(?P<row>-?\d{0,})\]?C\[?(?P<cell>-?\d{0,})\]?(?!:)/six', $formula, $matches);
+	
+	
+	//LITTERAL REPLACMENT / EXPANSION
 	$expanded_formula = preg_replace('/((?<!:)(?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ]{1,})\'!|)R\[?(?P<row>-?\d{0,})\]?C\[?(?P<cell>-?\d{0,})\]?(?!:))/six', '((\1))', $formula);
+	preg_match_all('/(?<!:)(?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ]{1,})\'!|)R\[?(?P<row>-?\d{0,})\]?C\[?(?P<cell>-?\d{0,})\]?(?!:)/six', $formula, $matches);
+	
 	//print_r( $matches );
 	foreach( $matches[0] as $index => &$match ) {
+		
 		if( strlen( $matches['sheet'][$index] ) > 0 ) {
 			$cur_sheet = $matches['sheet'][$index];
 		}elseif( strlen( $matches['sheet2'][$index] ) > 0 ) {
@@ -65,9 +70,8 @@ function expand_eq( $formula, $row_index, $col_index, $sheet ) {
 			$cur_sheet = $sheet;	
 		}
 
-		$cur_row = $row_index + $matches['row'][$index];
-		$cur_col = $col_index + $matches['cell'][$index];
-
+		$cur_row = (int)$row_index + (int)$matches['row'][$index];
+		$cur_col = (int)$col_index + (int)$matches['cell'][$index];
 		$cur_selected =& $spreadsheet_data[ $cur_sheet ][ $cur_row ][ $cur_col ];
 
 		if( strlen($cur_selected['expanded']) ) {
@@ -81,10 +85,50 @@ function expand_eq( $formula, $row_index, $col_index, $sheet ) {
 		$expanded_formula = str_replace( "(({$match}))", ' ( ' . $cur_selected[ 'expanded' ] . ' ) ', $expanded_formula );
 
 	}
+	
+	//RANGE REPLACMENT
+	$expanded_formula = preg_replace('/((?<!:)(?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ]{1,})\'!|)R\[?(?P<row>-?\d{0,})\]?C\[?(?P<cell>-?\d{0,})\]?:R\[?(?P<row_to>-?\d{0,})\]?C\[?(?P<cell_to>-?\d{0,})\]?(?!:))/six', '///\1///', $expanded_formula);
+	preg_match_all('/(?<!:)(?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ]{1,})\'!|)R\[?(?P<row>-?\d{0,})\]?C\[?(?P<cell>-?\d{0,})\]?:R\[?(?P<row_to>-?\d{0,})\]?C\[?(?P<cell_to>-?\d{0,})\]?(?!:)/six', $expanded_formula, $matches);
+	
+	foreach( $matches[0] as $index => &$match ) {
+		
+		if( strlen( $matches['sheet'][$index] ) > 0 ) {
+			$cur_sheet = $matches['sheet'][$index];
+		}elseif( strlen( $matches['sheet2'][$index] ) > 0 ) {
+			$cur_sheet = $matches['sheet2'][$index];
+		}else{
+			$cur_sheet = $sheet;	
+		}
+		
+		$cur_row = (int)$row_index + (int)$matches['row'][$index];
+		$cur_col = (int)$col_index + (int)$matches['cell'][$index];
+		
+		$match_expands = array();
+		
+		for( $i_row = $cur_row; $i_row <= $cur_row + ($matches['row_to'][$index] - $matches['row'][$index]); $i_row++ ) {
+			for( $i_col = $cur_col; $i_col <= $cur_col + ($matches['cell_to'][$index] - $matches['cell'][$index]); $i_col++ ) {
+				$cur_selected =& $spreadsheet_data[ $cur_sheet ][ $i_row ][ $i_col ];
+				
+				if( strlen($cur_selected['expanded']) ) {
+
+				}elseif( strlen($cur_selected['formula']) ){
+					$cur_selected['expanded'] = expand_eq( $cur_selected['formula'], $cur_row, $cur_col, $cur_sheet );
+				}else{
+					$cur_selected['expanded'] = " #{$cur_sheet}_{$cur_row}_{$cur_col}# ";
+				}
+				
+				$match_expands[] = ' ( ' . $cur_selected[ 'expanded' ] . ' ) ';
+				
+			}
+		}
+		
+	}
+	
+	$expanded_formula = str_replace( "///{$match}///", implode( '; ', $match_expands ) , $expanded_formula );
 
 	return $expanded_formula;
 
 }
 
-echo '<pre>';
+
 print_r( $spreadsheet_data );
