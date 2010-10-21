@@ -18,11 +18,14 @@ foreach($Worksheets as $Worksheet) {
 			}
 
 			$formula = trim($cell->getAttribute( 'ss:Formula' ), ' =');
-
-			$spreadsheet_data[$sheetname][ $row_index ][ $index ] = array( 
-			'value' => $cell->nodeValue,
-			'formula' => $formula,
+			
+			$xd =  array( 
+				'value' => $cell->nodeValue,
+				'formula' => $formula,
 			);
+			if( strlen( $xd['value'] ) || strlen( $xd['formula'] ) ) {
+				$spreadsheet_data[$sheetname][ $row_index ][ $index ] = $xd;
+			}
 
 			$index += 1;
 		}
