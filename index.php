@@ -5,14 +5,12 @@ $dom = DOMDocument::load( 'tests.xml' );
 $Worksheets = $dom->getElementsByTagName( 'Worksheet' );
 foreach($Worksheets as $Worksheet) {
 	$rows = $Worksheet->getElementsByTagName( 'Row' );
-	$first_row = true;
-	$row_index = 0;
+	$row_index = 1;
 	$sheetname = $Worksheet->getAttribute( 'ss:Name' );
 	foreach ($rows as $row)	{
 		$cells = $row->getElementsByTagName( 'Cell' );
 		$index = 1;
-		foreach( $cells as $cell )
-		{
+		foreach( $cells as $cell ) {
 			$ind = $cell->getAttribute( 'ss:Index' );
 			if ( $ind != null ) {
 				//echo "Picked up a special index! Woo";
@@ -21,7 +19,7 @@ foreach($Worksheets as $Worksheet) {
 
 			$formula = trim($cell->getAttribute( 'ss:Formula' ), ' =');
 
-			$spreadsheet_data[$sheetname][ $row_index + 1 ][ $index ] = array( 
+			$spreadsheet_data[$sheetname][ $row_index ][ $index ] = array( 
 			'value' => $cell->nodeValue,
 			'formula' => $formula,
 			);
@@ -29,15 +27,14 @@ foreach($Worksheets as $Worksheet) {
 			$index += 1;
 		}
 
-		$first_row = false;
 		$row_index++;
 	}
 }
 
 foreach( $spreadsheet_data as $sheetname => &$sheet ) {
-	
+
 	foreach( $sheet as $row_index => &$column ) {
-		
+
 		foreach( $column as $col_index => &$col_value ) {
 			if( !strlen( $col_value['expanded'] ) ){
 				if( strlen($col_value['formula']) ) {
@@ -64,14 +61,14 @@ function expand_eq( $formula, $row_index, $col_index, $sheet ) {
 		}else{
 			$cur_sheet = $sheet;	
 		}
-		
+
 		$cur_row = $row_index + $matches['row'][$index];
 		$cur_col = $col_index + $matches['cell'][$index];
-		
+
 		$cur_selected =& $spreadsheet_data[ $cur_sheet ][ $cur_row ][ $cur_col ];
-		
+
 		if( strlen($cur_selected['expanded']) ) {
-			
+
 		}elseif( strlen($cur_selected['formula']) ){
 			$cur_selected['expanded'] = expand_eq( $cur_selected['formula'], $cur_row, $cur_col, $cur_sheet );
 		}else{
@@ -79,9 +76,9 @@ function expand_eq( $formula, $row_index, $col_index, $sheet ) {
 		}
 
 		$expanded_formula = str_replace( "(({$match}))", ' ( ' . $cur_selected[ 'expanded' ] . ' ) ', $expanded_formula );
-		
+
 	}
-	
+
 	return $expanded_formula;
 
 }
