@@ -21,7 +21,7 @@ foreach($Worksheets as $Worksheet) {
 			
 			$cind = $cell->getAttribute( 'ss:Index' );
 			if ( $cind != null ) {
-				$index = $ind;
+				$index = $cind;
 			}
 
 			$formula = trim($cell->getAttribute( 'ss:Formula' ), ' =');
