@@ -108,6 +108,18 @@ class XML_XLS {
 	function X_ISEVEN( $x ) {
 		return !( $x & 1 );
 	}
+	
+	function X_ISODD( $x ) {
+		return !self::X_ISODD( $x );
+	}
+	
+	function X_SUM() {
+		$j = 0;
+		for ($i = 0;$i < func_num_args();$i++) {
+			$j += func_get_arg($i);
+		}
+		return $j;
+	}
 }
 
 
