@@ -68,44 +68,46 @@ foreach( $spreadsheet_data as $sheetname => &$sheet ) {
 	}
 }
 
-function XML_XLS_IF( $bool, $a, $b = 0 ) {
-	if( $bool ) {
-		return $a;
-	}else{
-		return $b;	
+class XML_XLS {
+	function X_IF( $bool, $a, $b = 0 ) {
+		if( $bool ) {
+			return $a;
+		}else{
+			return $b;	
+		}
 	}
-}
 
-function XML_XLS_MAX() {
-	return max( func_get_args() );
-}
-
-function XML_XLS_MIN() {
-	return min( func_get_args() );
-}
-
-function XML_XLS_OR( $a, $b ) {
-	return $a || $b;	
-}
-
-function XML_XLS_AND( $a, $b ) {
-	return $a && $b;
-}
-
-function XML_XLS_CONCATENATE() {
-	$j = '';
-	for ($i = 0;$i < func_num_args();$i++) {
-		$j .= func_get_arg($i);
+	function X_MAX() {
+		return max( func_get_args() );
 	}
-	return $j;
-}
 
-function XML_XLS_MID( $text, $start, $end ) {
-	return substr( $text, $start - 1, $end );
-}
+	function X_MIN() {
+		return min( func_get_args() );
+	}
 
-function XML_XLS_ISEVEN( $x ) {
-	return !( $x & 1 );
+	function X_OR( $a, $b ) {
+		return $a || $b;	
+	}
+
+	function X_AND( $a, $b ) {
+		return $a && $b;
+	}
+
+	function X_CONCATENATE() {
+		$j = '';
+		for ($i = 0;$i < func_num_args();$i++) {
+			$j .= func_get_arg($i);
+		}
+		return $j;
+	}
+
+	function X_MID( $text, $start, $end ) {
+		return substr( $text, $start - 1, $end );
+	}
+
+	function X_ISEVEN( $x ) {
+		return !( $x & 1 );
+	}
 }
 
 
@@ -188,7 +190,7 @@ function expand_eq( $formula, $row_index, $col_index, $sheet ) {
 
 	}
 
-	$expanded_formula = preg_replace('/([A-Z]{1,})\(/six', 'XML_XLS_\1 (', $expanded_formula);
+	$expanded_formula = preg_replace('/([A-Z]{1,})\(/six', 'XML_XLS::X_\1 (', $expanded_formula);
 	$expanded_formula = preg_replace('/(?<![=])=(?![=])/six', '==', $expanded_formula);
 
 	return $expanded_formula;
