@@ -2,44 +2,49 @@
 error_reporting(E_ALL ^ E_NOTICE);
 echo '<pre>';
 
-$dom = DOMDocument::load( 'tests.xml' );
-$Worksheets = $dom->getElementsByTagName( 'Worksheet' );
-foreach($Worksheets as $Worksheet) {
-	$rows = $Worksheet->getElementsByTagName( 'Row' );
-	$row_index = 1;
-	$sheetname = $Worksheet->getAttribute( 'ss:Name' );
-	foreach ($rows as $row)	{
-		
-		$rind = $row->getAttribute( 'ss:Index' );
-		if ( $rind != null ) {
-			$row_index = $rind;
-		}
-		
-		$cells = $row->getElementsByTagName( 'Cell' );
-		$index = 1;
-		foreach( $cells as $cell ) {
+function ss_parse( $filename ) {
+	$dom = DOMDocument::load( $filename );
+	$Worksheets = $dom->getElementsByTagName( 'Worksheet' );
+	foreach($Worksheets as $Worksheet) {
+		$rows = $Worksheet->getElementsByTagName( 'Row' );
+		$row_index = 1;
+		$sheetname = $Worksheet->getAttribute( 'ss:Name' );
+		foreach ($rows as $row)	{
 			
-			$cind = $cell->getAttribute( 'ss:Index' );
-			if ( $cind != null ) {
-				$index = $cind;
-			}
-
-			$formula = trim($cell->getAttribute( 'ss:Formula' ), ' =');
-
-			$xd =  array( 
-			'value' => $cell->nodeValue,
-			'formula' => $formula,
-			);
-			if( strlen( $xd['value'] ) || strlen( $xd['formula'] ) ) {
-				$spreadsheet_data[$sheetname][ $row_index ][ $index ] = $xd;
+			$rind = $row->getAttribute( 'ss:Index' );
+			if ( $rind != null ) {
+				$row_index = $rind;
 			}
 			
-			$index += 1;
-		}
+			$cells = $row->getElementsByTagName( 'Cell' );
+			$index = 1;
+			foreach( $cells as $cell ) {
+				
+				$cind = $cell->getAttribute( 'ss:Index' );
+				if ( $cind != null ) {
+					$index = $cind;
+				}
 
-		$row_index++;
+				$formula = trim($cell->getAttribute( 'ss:Formula' ), ' =');
+
+				$xd =  array( 
+				'value' => $cell->nodeValue,
+				'formula' => $formula,
+				);
+				if( strlen( $xd['value'] ) || strlen( $xd['formula'] ) ) {
+					$spreadsheet_data[$sheetname][ $row_index ][ $index ] = $xd;
+				}
+				
+				$index += 1;
+			}
+
+			$row_index++;
+		}
 	}
+	return $spreadsheet_data;
 }
+
+$spreadsheet_data = ss_parse( 'test2.xml' );
 
 foreach( $spreadsheet_data as $sheetname => &$sheet ) {
 
