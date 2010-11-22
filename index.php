@@ -162,7 +162,7 @@ function expand_eq( $formula, $row_index, $col_index, $sheet ) {
 			$GLOBALS[sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col}"] = $cur_selected['value'];
 		}
 
-		$expanded_formula = str_replace( "(({$match}))", ' ( ' . $cur_selected[ 'expanded' ] . ' ) ', $expanded_formula );
+		$expanded_formula = str_replace( "(({$match}))", ' ( /* '. ( sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col}" ) .' */ ' . $cur_selected[ 'expanded' ] . ' ) ', $expanded_formula );
 
 	}
 
