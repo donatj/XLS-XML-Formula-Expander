@@ -129,7 +129,7 @@ class XML_XLS {
 
 
 
-function expand_eq( $formula, $row_index, $col_index, $sheet ) {
+function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 	//$expanded_formula = $formula;
 	global $spreadsheet_data;
 
@@ -156,13 +156,13 @@ function expand_eq( $formula, $row_index, $col_index, $sheet ) {
 		if( strlen($cur_selected['expanded']) ) {
 
 		}elseif( strlen($cur_selected['formula']) ){
-			$cur_selected['expanded'] = expand_eq( $cur_selected['formula'], $cur_row, $cur_col, $cur_sheet );
+			$cur_selected['expanded'] = expand_eq( $cur_selected['formula'], $cur_row, $cur_col, $cur_sheet, $depth + 1 );
 		}else{
 			$cur_selected['expanded'] = " \$".sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col} ";
 			$GLOBALS[sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col}"] = $cur_selected['value'];
 		}
 
-		$expanded_formula = str_replace( "(({$match}))", ' ( /* '. ( sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col}" ) .' */ ' . $cur_selected[ 'expanded' ] . ' ) ', $expanded_formula );
+		$expanded_formula = str_replace( "(({$match}))", PHP_EOL . str_repeat( "\t", $depth) . ' ( /* OPENS '. ( sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col}" ) .' */ ' . $cur_selected[ 'expanded' ] . ' /* CLOSES '. ( sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col}" ) .' */ ) ' . PHP_EOL, $expanded_formula );
 
 	}
 
@@ -192,7 +192,7 @@ function expand_eq( $formula, $row_index, $col_index, $sheet ) {
 				if( strlen($cur_selected['expanded']) ) {
 
 				}elseif( strlen($cur_selected['formula']) ){
-					$cur_selected['expanded'] = expand_eq( $cur_selected['formula'], $cur_row, $cur_col, $cur_sheet );
+					$cur_selected['expanded'] = expand_eq( $cur_selected['formula'], $cur_row, $cur_col, $cur_sheet, $depth + 1 );
 				}else{
 					$cur_selected['expanded'] = " \$". sheet_clean($cur_sheet) ."_{$cur_row}_{$cur_col} ";
 					$GLOBALS[sheet_clean($cur_sheet) . "_{$cur_row}_{$cur_col}"] = $cur_selected['value'];
