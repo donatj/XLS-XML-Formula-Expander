@@ -26,11 +26,19 @@ function ss_parse( $filename ) {
 				}
 
 				$formula = trim($cell->getAttribute( 'ss:Formula' ), ' =');
-
-				$xd =  array( 
-				'value' => $cell->nodeValue,
-				'formula' => $formula,
-				);
+				
+				if( $datas = $cell->getElementsByTagName('Data') ) {
+					$xd =  array( 
+						'value' => $datas->item(0)->nodeValue,
+						'formula' => $formula,
+					);
+				}else{
+					$xd =  array( 
+						'value' => $cell->nodeValue,
+						'formula' => $formula,
+					);	
+				}
+				
 				if( strlen( $xd['value'] ) || strlen( $xd['formula'] ) ) {
 					$spreadsheet_data[$sheetname][ $row_index ][ $index ] = $xd;
 				}
