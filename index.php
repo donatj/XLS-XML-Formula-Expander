@@ -145,7 +145,7 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 
 	//LITTERAL REPLACMENT / EXPANSION
 	$expanded_formula = preg_replace('/((?<!:)(?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z \(\)]{1,})\'!|)R\[?(?P<row>-?\d{0,})\]?C\[?(?P<cell>-?\d{0,})\]?(?!:))/six', '((\1))', $formula);
-	preg_match_all('/(?<!:)(?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z \(\)]{1,})\'!|)R\[?(?P<row>-?\d{0,})\]?C\[?(?P<cell>-?\d{0,})\]?(?!:)/six', $formula, $matches);
+	preg_match_all('/(?<!:)(?:(?P<sheet>[A-Z]{1,})!|\Z(?P<sheet2>[A-Z ()]{1,})\Z!|)R(?P<row_rel>\[?)(?P<row>-?\d{0,})\]?C(?P<col_rel>\[)?(?P<cell>-?\d{0,})\]?(?!:)/si', $formula, $matches);
 
 	//print_r( $matches );
 	foreach( $matches[0] as $index => &$match ) {
@@ -157,9 +157,23 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 		}else{
 			$cur_sheet = $sheet;	
 		}
+		
+		if( $matches['row_rel'][$index] == '[' ) {
+			$cur_row = (int)$row_index + (int)$matches['row'][$index];		
+		}elseif( $matches['row'][$index] == '' ) {
+			$cur_row = (int)$row_index;
+		}else{
+			$cur_row =  (int)$matches['row'][$index];
+		}
+		
+		if( $matches['col_rel'][$index] == '[' ) {
+			$cur_col = (int)$col_index + (int)$matches['cell'][$index];		
+		}elseif( $matches['cell'][$index] == '' ) {
+			$cur_col = (int)$col_index;
+		}else{
+			$cur_col =  (int)$matches['cell'][$index];
+		}
 
-		$cur_row = (int)$row_index + (int)$matches['row'][$index];
-		$cur_col = (int)$col_index + (int)$matches['cell'][$index];
 		$cur_selected =& $spreadsheet_data[ $cur_sheet ][ $cur_row ][ $cur_col ];
 
 		if( strlen($cur_selected['expanded']) ) {
