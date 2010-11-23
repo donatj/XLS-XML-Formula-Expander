@@ -60,8 +60,9 @@ foreach( $spreadsheet_data as $sheetname => &$sheet ) {
 			}
 
 			if( $col_value['expanded'] ) {
-				echo '<strong>Forumla '. $sheetname . ':' . base_xls($col_index) . '' . $row_index .'</strong>:' . $col_value['expanded'] . ':' . $col_value['formula'] . '<br />';
+				echo $sheetname . ':'  .base_xls($col_index) . '' . $row_index . ' <strong>Forumla :' . '</strong>:<div style="max-height: 200px; overflow: auto; background: #eee">' . $col_value['expanded'] . /*':' . $col_value['formula'] . */ '</div><br />';
 				echo '<strong>Returns</strong>: ' . eval( 'return ' . $col_value['expanded'] . ';' ) . '<br /><br />';
+				
 				//die('dead');
 				
 				//echo $Inputs_12_2 . ' ' .  $Rails_5_3 . '<br />';
