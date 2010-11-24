@@ -305,10 +305,14 @@ function get_local_exp_part( $equat, $init_pos, $exp = false, &$data = null ) {
 			}else{				
 				if( preg_match('/[^a-zA-Z0-9_\-$\.]/i', $equat[$init_pos - $j] ) || $equat[$init_pos - $j] == '' ) {
 					if( $exp ) {
-						$part = substr( $part, 0, -1 );
+						if( $equat[$init_pos - $j] != '' ) {
+							$part = substr( $part, 0, -1 );
+						}
 						$data['end'] = $init_pos - $j - 1;
 					}else{
-						$part = substr( $part, 1 );
+						if( $equat[$init_pos - $j] != '' ) {
+							$part = substr( $part, 1 );
+						}
 						$data['end'] = $init_pos - $j + 1;
 					}
 					break;
