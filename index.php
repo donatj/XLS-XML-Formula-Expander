@@ -266,17 +266,18 @@ function sheet_clean( $str ) {
 }
 
 function get_local_exp_part( $equat, $init_pos, $exp = false, &$data = null ) {
-
+	static $index = 0;
+	$index++;
 	$part = '';
 	$data = false;
 	$open_paren = 0;
-
+	
 	for( $i = 1; $i <= 10000; $i++) {
 
 		$j = ( $exp ? 0 - $i : $i );
 
 		if( !$data && $equat[$init_pos - $j] != ' ' ) {
-			$data = array( 'pos' => $init_pos - $j, 'char' => $equat[$init_pos - $j] );
+			$data = array( 'pos' => $init_pos - $j, 'char' => $equat[$init_pos - $j], 'index' => $index );
 		}
 
 		if( $data ) {
@@ -301,8 +302,8 @@ function get_local_exp_part( $equat, $init_pos, $exp = false, &$data = null ) {
 					break;
 				}
 
-			}else{
-				if( preg_match('/[^a-zA-Z0-9_\-$\.]/i', $equat[$init_pos - $j] ) ) {
+			}else{				
+				if( preg_match('/[^a-zA-Z0-9_\-$\.]/i', $equat[$init_pos - $j] ) || $equat[$init_pos - $j] == '' ) {
 					if( $exp ) {
 						$part = substr( $part, 0, -1 );
 						$data['end'] = $init_pos - $j - 1;
@@ -313,7 +314,6 @@ function get_local_exp_part( $equat, $init_pos, $exp = false, &$data = null ) {
 					break;
 					
 				}
-				$data['n'] = true;
 			}
 		}
 	}
