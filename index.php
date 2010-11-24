@@ -226,12 +226,25 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 			}
 		}
 
-		$expanded_formula = str_replace( "///{$match}///", implode( '; ', $match_expands ) , $expanded_formula );
+		$expanded_formula = str_replace( "///{$match}///", implode( ';;; ', $match_expands ) , $expanded_formula );
 
 	}
 
 	$expanded_formula = preg_replace('/([A-Z]{1,})\(/six', 'XML_XLS::X_\1 (', $expanded_formula);
 	$expanded_formula = preg_replace('/(?<![=])=(?![=])/six', '==', $expanded_formula);
+	
+	//Power Expansion
+	$x = 0;
+	while( $x = strpos($expanded_formula, '^', $x + 1 ) ) {
+
+		$base = get_local_exp_part( $expanded_formula, $x, false, $data_b );
+		$exp = get_local_exp_part( $expanded_formula, $x, true, $data_e );
+		print_r( $data_b );
+		print_r( $data_e );
+		echo 'pow( ' . $base . ' , ' . $exp . ' ) <hr />';
+
+
+	}
 
 	return $expanded_formula;
 
@@ -250,4 +263,61 @@ function base_xls( $number ) {
 
 function sheet_clean( $str ) {
 	return preg_replace('/[^A-Z]/six', 'X', $str);	
+}
+
+function get_local_exp_part( $equat, $init_pos, $exp = false, &$data = null ) {
+
+	$part = '';
+	$data = false;
+	$open_paren = 0;
+
+	for( $i = 1; $i <= 10000; $i++) {
+
+		$j = ( $exp ? 0 - $i : $i );
+
+		if( !$data && $equat[$init_pos - $j] != ' ' ) {
+			$data = array( 'pos' => $init_pos - $j, 'char' => $equat[$init_pos - $j] );
+		}
+
+		if( $data ) {
+			if( $exp ) {
+				$part .= $equat[$init_pos - $j];
+			}else{
+				$part = $equat[$init_pos - $j] . $part;
+			}
+		}
+
+		if( $data ) {
+			if( $data['char'] == ($exp ? '(' : ')') ) {
+
+				if( $equat[$init_pos - $j] == ($exp ? '(' : ')') ) {
+					$open_paren++;
+				}elseif( $equat[$init_pos - $j] == (!$exp ? '(' : ')') ) {
+					$open_paren--;
+				}
+
+				if( $open_paren == 0 ) {
+					$data['end'] = $init_pos - $j;
+					break;
+				}
+
+			}else{
+				if( preg_match('/[^a-zA-Z0-9_\-$\.]/i', $equat[$init_pos - $j] ) ) {
+					if( $exp ) {
+						$part = substr( $part, 0, -1 );
+						$data['end'] = $init_pos - $j - 1;
+					}else{
+						$part = substr( $part, 1 );
+						$data['end'] = $init_pos - $j + 1;
+					}
+					break;
+					
+				}
+				$data['n'] = true;
+			}
+		}
+	}
+	
+	return $part;
+
 }
