@@ -236,23 +236,18 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 	$expanded_formula = preg_replace('/(?<![=])=(?![=])/six', '==', $expanded_formula);
 	
 	//Power Expansion
+	$expanded_formula .= ' '; //lazy fix for overflow issue.
+	
 	$x = 0;
 	while( $x = strpos($expanded_formula, '^', $x + 1 ) ) {
-
 		$base = get_local_exp_part( $expanded_formula, $x, false, $data_b );
-		$exp = get_local_exp_part( $expanded_formula, $x, true, $data_e );
-		print_r( $data_b );
-		print_r( $data_e );
-		echo 'pow( ' . $base . ' , ' . $exp . ' ) <hr />';
-
-
+		$exp  = get_local_exp_part( $expanded_formula, $x, true, $data_e );
+		$expanded_formula = substr( $expanded_formula, 0, $data_b['end'] ) . ' pow ( ' . $base . ' , ' . $exp . ' ) ' . substr( $expanded_formula, $data_e['end'] + 1 );
 	}
 
 	return $expanded_formula;
 
 }
-
-//print_r( $spreadsheet_data );
 
 function base_xls( $number ) {
 	$str = base_convert($number - 1, 10, 26);
