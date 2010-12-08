@@ -125,7 +125,7 @@ class XML_XLS {
 	}
 	
 	function X_ISODD( $x ) {
-		return !self::X_ISODD( $x );
+		return !self::X_ISEVEN( $x );
 	}
 	
 	function X_SUM() {
