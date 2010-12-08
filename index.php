@@ -145,12 +145,13 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 
 
 	//LITTERAL REPLACMENT / EXPANSION
-	$expanded_formula = preg_replace('/((?<!:)(?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z \(\)]{1,})\'!|)R\[?(?P<row>-?\d{0,})\]?C\[?(?P<cell>-?\d{0,})\]?(?!:))/six', '((\1))', $formula);
-	preg_match_all('/(?<!:)(?:(?P<sheet>[A-Z]{1,})!|\Z(?P<sheet2>[A-Z ()]{1,})\Z!|)R(?P<row_rel>\[?)(?P<row>-?\d{0,})\]?C(?P<col_rel>\[)?(?P<cell>-?\d{0,})\]?(?!:)/si', $formula, $matches);
+	$LITTERAL = '/(?<!:)((?:(?P<sheet>[A-Z]{1,})!|\Z(?P<sheet2>[A-Z ()]+)\Z!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?)(?!:)/si';
+	
+	$expanded_formula = preg_replace($LITTERAL, '((\1))', $formula);
+	preg_match_all($LITTERAL, $formula, $matches);
 
-	//print_r( $matches );
 	foreach( $matches[0] as $index => &$match ) {
-
+	
 		if( strlen( $matches['sheet'][$index] ) > 0 ) {
 			$cur_sheet = $matches['sheet'][$index];
 		}elseif( strlen( $matches['sheet2'][$index] ) > 0 ) {
@@ -159,22 +160,22 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 			$cur_sheet = $sheet;	
 		}
 		
-		if( $matches['row_rel'][$index] == '[' ) {
-			$cur_row = (int)$row_index + (int)$matches['row'][$index];		
-		}elseif( $matches['row'][$index] == '' ) {
-			$cur_row = (int)$row_index;
+		if( $matches['rowrel'][$index] ) {
+			$cur_row = (int)$row_index + (int)$matches['rowrel'][$index];		
+		}elseif( $matches['rowabs'][$index] ) {
+			$cur_row = (int)$matches['rowabs'][$index];
 		}else{
-			$cur_row =  (int)$matches['row'][$index];
+			$cur_row = (int)$row_index;
 		}
 		
-		if( $matches['col_rel'][$index] == '[' ) {
-			$cur_col = (int)$col_index + (int)$matches['cell'][$index];		
-		}elseif( $matches['cell'][$index] == '' ) {
-			$cur_col = (int)$col_index;
+		if( $matches['colrel'][$index] ) {
+			$cur_col = (int)$col_index + (int)$matches['colrel'][$index];		
+		}elseif( $matches['colabs'][$index] ) {
+			$cur_col =  (int)$matches['colabs'][$index];
 		}else{
-			$cur_col =  (int)$matches['cell'][$index];
+			$cur_col = (int)$col_index;
 		}
-
+		
 		$cur_selected =& $spreadsheet_data[ $cur_sheet ][ $cur_row ][ $cur_col ];
 
 		if( strlen($cur_selected['expanded']) ) {
