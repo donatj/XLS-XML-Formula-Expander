@@ -177,17 +177,25 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 		}
 		
 		$cur_selected =& $spreadsheet_data[ $cur_sheet ][ $cur_row ][ $cur_col ];
-
+		
+		$temp = false;
+		
 		if( strlen($cur_selected['expanded']) ) {
-
+			if( strlen($cur_selected['formula']) == 0 ) {
+				$temp = true;
+			}
 		}elseif( strlen($cur_selected['formula']) ){
 			$cur_selected['expanded'] = expand_eq( $cur_selected['formula'], $cur_row, $cur_col, $cur_sheet, $depth + 1 );
 		}else{
 			$cur_selected['expanded'] = " \$".sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col} ";
 			$GLOBALS[sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col}"] = $cur_selected['value'];
+			$GLOBALS['xbob'][sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col}"] = $cur_selected['value'];
+			$temp = true;
 		}
+		
+		$posname = sheet_clean($cur_sheet). "!" . base_xls( $cur_col ) . $cur_row . ' ' . $depth . ( $temp ? ' value: ' . $cur_selected['value'] : '') . ';';
 
-		$expanded_formula = str_replace( "(({$match}))", PHP_EOL . str_repeat( "\t", $depth) . ' ( /* OPENS '. ( sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col}" ) .' */ ' . $cur_selected[ 'expanded' ] . ' /* CLOSES '. ( sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col}" ) .' */ ) ' . PHP_EOL, $expanded_formula );
+		$expanded_formula = str_replace( "(({$match}))", PHP_EOL . str_repeat( "\t", $depth) . ' ( /* '. $posname .' « */ ' . $cur_selected[ 'expanded' ] . ' /* » '. $posname .' */ ) ' . PHP_EOL, $expanded_formula );
 
 	}
 
