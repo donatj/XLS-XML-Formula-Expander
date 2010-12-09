@@ -253,8 +253,12 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 		$expanded_formula = str_replace( "///{$match}///", implode( ';;; ', $match_expands ) , $expanded_formula );
 
 	}
-
-	$expanded_formula = preg_replace('/([A-Z]{1,})\(/six', 'XML_XLS::X_\1 (', $expanded_formula);
+	
+	//Special PI handling
+	$expanded_formula = preg_replace('/PI\(\)/i', pi(), $expanded_formula);
+	
+	//Functions
+	$expanded_formula = preg_replace('/([A-Z]{1,})\(/six', ' XML_XLS::X_\1 ( ', $expanded_formula);
 	$expanded_formula = preg_replace('/(?<![=])=(?![=])/six', '==', $expanded_formula);
 	
 	//Power Expansion
