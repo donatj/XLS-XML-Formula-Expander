@@ -81,6 +81,17 @@ foreach( $spreadsheet_data as $sheetname => &$sheet ) {
 
 		}
 	}
+
+function val_test( $row, $col, $expanded, $expected ) {
+	extract( $GLOBALS['xbob'] );
+	echo '<div ';
+	if( ($result = eval( 'return ' . $expanded . ';' )) == $expected ) {
+		echo 'style="background: #a0b96a">';
+	}else{
+		echo 'style="background: #b96a6a"><strong>ERROR</strong> ';
+	}
+	echo base_xls( $col ) . $row .  ': <small>= ' . $result . '</small>';
+	echo '</div>';
 }
 
 class XML_XLS {
