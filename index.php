@@ -72,9 +72,6 @@ foreach( $spreadsheet_data as $sheetname => &$sheet ) {
 				echo $sheetname . ':'  .base_xls($col_index) . '' . $row_index . ' <strong>Forumla :' . '</strong>:<div style="max-height: 200px; overflow: auto; background: #eee">' . $col_value['expanded'] . /*':' . $col_value['formula'] . */ '</div><br />';
 				echo '<strong>Returns</strong>: ' . eval( 'return ' . $col_value['expanded'] . ';' ) . '<br /><br />';
 				
-				//die('dead');
-				
-				//echo $Inputs_12_2 . ' ' .  $Rails_5_3 . '<br />';
 				
 				flush();
 			}
@@ -156,7 +153,6 @@ class XML_XLS {
 function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 	//$expanded_formula = $formula;
 	global $spreadsheet_data;
-
 
 	//LITTERAL REPLACMENT / EXPANSION
 	$LITTERAL = '/(?<!:)((?:(?P<sheet>[A-Z]{1,})!|\Z(?P<sheet2>[A-Z ()]+)\Z!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?)(?!:)/si';
