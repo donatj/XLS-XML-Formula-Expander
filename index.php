@@ -100,8 +100,11 @@ class XML_XLS {
 		return min( func_get_args() );
 	}
 
-	function X_OR( $a, $b ) {
-		return $a || $b;	
+	function X_OR() {
+		for ($i = 0;$i < func_num_args();$i++) {
+			if( func_get_arg($i) ) return true;
+		}
+		return false;
 	}
 
 	function X_AND( $a, $b ) {
