@@ -174,7 +174,7 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 	
 	$expanded_formula = $formula;
 	
-	$RANGE = '/(((?:(?P<sheet>[A-Z]{1,})!|\Z(?P<sheet2>[A-Z ()]+)\Z!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?):(R((\[(?P<rowrel2>-?\d+)\])|(?P<rowabs2>\d+))?C((\[(?P<colrel2>-?\d+)\])|(?P<colabs2>\d+))?))/si';
+	$RANGE = '/(((?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ()]+)\'!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?):(R((\[(?P<rowrel2>-?\d+)\])|(?P<rowabs2>\d+))?C((\[(?P<colrel2>-?\d+)\])|(?P<colabs2>\d+))?))/si';
 	
 	preg_match_all($RANGE, $expanded_formula, $matches);
 	$expanded_formula = preg_replace($RANGE, '///\1///', $expanded_formula);
@@ -253,10 +253,10 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 	// --------------------------------------------------------------------
 	
 	//LITTERAL REPLACMENT / EXPANSION
-	$LITTERAL = '/(?<!:)((?:(?P<sheet>[A-Z]{1,})!|\Z(?P<sheet2>[A-Z ()]+)\Z!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?)(?!:)/si';
+	$LITTERAL = '/(?<!:)((?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ()]+)\'!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?)(?!:)/si';
 	
 	preg_match_all($LITTERAL, $expanded_formula, $matches);
-	$expanded_formula = preg_replace($LITTERAL, '((\1))', $expanded_formula);
+	$expanded_formula = preg_replace($LITTERAL, '///\1///', $expanded_formula);
 
 	foreach( $matches[0] as $index => &$match ) {
 	
@@ -304,7 +304,7 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 		$xls_cellname = sheet_clean($cur_sheet). "!" . base_xls( $cur_col ) . $cur_row;
 		$posname = $xls_cellname . ' ' . $depth . ( $temp ? ' value: ' . $cur_selected['value'] : '') . ';';
 
-		$expanded_formula = str_replace( "(({$match}))", PHP_EOL . str_repeat( "\t", $depth) . ' ( /* '. $posname .' « */ ' . $cur_selected[ 'expanded' ] . ' /* » '. $xls_cellname .' */ ) ' . PHP_EOL, $expanded_formula );
+		$expanded_formula = str_replace( "///{$match}///", PHP_EOL . str_repeat( "\t", $depth) . ' ( /* '. $posname .' « */ ' . $cur_selected[ 'expanded' ] . ' /* » '. $xls_cellname .' */ ) ' . PHP_EOL, $expanded_formula );
 
 	}
 	
