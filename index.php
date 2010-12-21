@@ -210,9 +210,10 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 			$temp = true;
 		}
 		
-		$posname = sheet_clean($cur_sheet). "!" . base_xls( $cur_col ) . $cur_row . ' ' . $depth . ( $temp ? ' value: ' . $cur_selected['value'] : '') . ';';
+		$xls_cellname = sheet_clean($cur_sheet). "!" . base_xls( $cur_col ) . $cur_row;
+		$posname = $xls_cellname . ' ' . $depth . ( $temp ? ' value: ' . $cur_selected['value'] : '') . ';';
 
-		$expanded_formula = str_replace( "(({$match}))", PHP_EOL . str_repeat( "\t", $depth) . ' ( /* '. $posname .' « */ ' . $cur_selected[ 'expanded' ] . ' /* » '. $posname .' */ ) ' . PHP_EOL, $expanded_formula );
+		$expanded_formula = str_replace( "(({$match}))", PHP_EOL . str_repeat( "\t", $depth) . ' ( /* '. $posname .' « */ ' . $cur_selected[ 'expanded' ] . ' /* » '. $xls_cellname .' */ ) ' . PHP_EOL, $expanded_formula );
 
 	}
 
