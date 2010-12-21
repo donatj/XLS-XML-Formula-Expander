@@ -55,29 +55,8 @@ function ss_parse( $filename ) {
 
 $spreadsheet_data = ss_parse( 'test2.xml' );
 
-foreach( $spreadsheet_data as $sheetname => &$sheet ) {
 
-	foreach( $sheet as $row_index => &$column ) {
 
-		foreach( $column as $col_index => &$col_value ) {
-			if( !strlen( $col_value['expanded'] ) ){
-				if( strlen($col_value['formula']) ) {
-					$col_value['expanded']=  expand_eq( $col_value['formula'], $row_index, $col_index, $sheetname );
-				}else{
-					//$col_value['expanded'] = " #{$sheetname}_{$row_index}_{$col_index}# ";
-				}
-			}
-
-			if( $col_value['expanded'] ) {
-				echo $sheetname . ':'  .base_xls($col_index) . '' . $row_index . ' <strong>Forumla :' . '</strong>:<div style="max-height: 200px; overflow: auto; background: #eee">' . $col_value['expanded'] . /*':' . $col_value['formula'] . */ '</div><br />';
-				echo '<strong>Returns</strong>: ' . eval( 'return ' . $col_value['expanded'] . ';' ) . '<br /><br />';
-				
-				
-				flush();
-			}
-
-		}
-	}
 
 function auto_test( $sheet, $col, $row ) {
 	global $spreadsheet_data;
