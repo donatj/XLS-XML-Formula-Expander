@@ -76,12 +76,15 @@ function auto_test( $sheet, $col, $row ) {
 		echo 'style="background: #b96a6a">';
 		$err = true;
 	}
-	if( $err || !strlen( $result ) ) {
-		echo '<div style="border: 1px solid #aaa; max-height: 200px; overflow: auto; background: #eee"><pre>' . $expanded . '</pre></div>';
-	}
+	
 	echo '<pre style="display:inline">';
 	echo $sheet . '!' . base_xls( $col ) . $row .  ':	<small>EXP:<em>'.$expected.'</em>	CALC:<em>' . $result . '</em></small>';
-	echo '</pre></div>';
+	echo '</pre>';
+	if( $err /*|| !strlen( $result )*/ ) {
+		echo '<div style="border: 1px solid #aaa; max-height: 200px; overflow: auto; background: #eee"><pre>' . $expanded . '</pre></div>';
+	}
+	echo '</div>' . PHP_EOL;
+	flush();
 }
 
 class XML_XLS {
