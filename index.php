@@ -88,8 +88,10 @@ function auto_test( $sheet, $col, $row ) {
 	extract( $GLOBALS['xbob'] );
 	$expected = $spreadsheet_data[$sheet][$row][$col]['value'];
 	
+	$result = eval( 'return ' . $expanded . ';' );
+	
 	echo '<div ';
-	if( ($result = eval( 'return ' . $expanded . ';' ) ) == $expected ) {
+	if( $result == $expected ) {
 		echo 'style="background: #a0b96a">';
 	}else{
 		echo 'style="background: #b96a6a">';
