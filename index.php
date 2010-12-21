@@ -169,6 +169,10 @@ class XML_XLS {
 		return round( $val, $precision );
 	}
 	
+	static function X_VALUE( $val ) {
+		return (double)trim($val);
+	}
+	
 }
 
 
