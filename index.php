@@ -153,6 +153,11 @@ class XML_XLS {
 		}
 		return $j;
 	}
+	
+	function X_NOT( $x ) {
+		return !$x;
+	}
+	
 }
 
 
