@@ -92,10 +92,11 @@ function auto_test( $sheet, $col, $row ) {
 	if( ($result = eval( 'return ' . $expanded . ';' ) ) == $expected ) {
 		echo 'style="background: #a0b96a">';
 	}else{
-		echo 'style="background: #b96a6a"><strong>ERROR</strong> ';
+		echo 'style="background: #b96a6a">';
 	}
-	echo $sheet . '!' . base_xls( $col ) . $row .  ': <small>Explected '.$expected.'; Calculated: ' . $result . '</small>';
-	echo '</div>';
+	echo '<pre style="display:inline">';
+	echo $sheet . '!' . base_xls( $col ) . $row .  ':	<small>EXP:<em>'.$expected.'</em>	CALC:<em>' . $result . '</em></small>';
+	echo '</pre></div>';
 }
 
 class XML_XLS {
