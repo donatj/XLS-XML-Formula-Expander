@@ -79,15 +79,22 @@ foreach( $spreadsheet_data as $sheetname => &$sheet ) {
 		}
 	}
 
-function val_test( $row, $col, $expanded, $expected ) {
+function auto_test( $sheet, $col, $row ) {
+	global $spreadsheet_data;
+
+	if( !is_numeric($col) ) { $col = base_xls_rev( $col ); }
+	
+	$expanded = expand_eq( $spreadsheet_data[$sheet][$row][$col]['formula'], $row, $col, $sheet );
 	extract( $GLOBALS['xbob'] );
+	$expected = $spreadsheet_data[$sheet][$row][$col]['value'];
+	
 	echo '<div ';
-	if( ($result = eval( 'return ' . $expanded . ';' )) == $expected ) {
+	if( ($result = eval( 'return ' . $expanded . ';' ) ) == $expected ) {
 		echo 'style="background: #a0b96a">';
 	}else{
 		echo 'style="background: #b96a6a"><strong>ERROR</strong> ';
 	}
-	echo base_xls( $col ) . $row .  ': <small>= ' . $result . '</small>';
+	echo $sheet . '!' . base_xls( $col ) . $row .  ': <small>Explected '.$expected.'; Calculated: ' . $result . '</small>';
 	echo '</div>';
 }
 
@@ -278,6 +285,10 @@ function base_xls( $number ) {
 		$str[ $i ] = chr(ord( $str[$i]) - 1 );
 	}
 	return $str;
+}
+
+function base_xls_rev( $letter ) {
+	return strpos('ABCDEFGHIJKLMNOPQRSTUVWXYZ', strtoupper( $letter ) ) + 1;
 }
 
 function sheet_clean( $str ) {
