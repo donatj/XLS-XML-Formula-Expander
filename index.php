@@ -161,6 +161,10 @@ class XML_XLS {
 		return !$x;
 	}
 	
+	static function X_ROUND( $val, $precision = 0 ) {
+		return round( $val, $precision );
+	}
+	
 }
 
 
