@@ -245,8 +245,10 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 				
 			}
 		}
+		
+		$xls_cellname = sheet_clean($cur_sheet). "!" . base_xls( $cur_col ) . $cur_row . ':' . base_xls( $cur_col2 ) . $cur_row2;
 				
-		$expanded_formula = str_replace( "///{$match}///", PHP_EOL . str_repeat( "\t", $depth) . ' ( /* RANGE « */ ' . $cur_selected[ 'expanded' ] . ' /* » RANGE */ ) ' . PHP_EOL, $expanded_formula );
+		$expanded_formula = str_replace( "///{$match}///", PHP_EOL . str_repeat( "\t", $depth) . ' /* RANGE '.$xls_cellname.' « */ ' . implode(' , ', $finals ) . ' /* » RANGE */ ' . PHP_EOL, $expanded_formula );
 		
 	}
 
