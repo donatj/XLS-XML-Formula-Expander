@@ -100,7 +100,7 @@ function auto_test( $sheet, $col, $row ) {
 }
 
 class XML_XLS {
-	function X_IF( $bool, $a, $b = 0 ) {
+	static function X_IF( $bool, $a, $b = 0 ) {
 		if( $bool ) {
 			return $a;
 		}else{
@@ -108,26 +108,26 @@ class XML_XLS {
 		}
 	}
 
-	function X_MAX() {
+	static function X_MAX() {
 		return max( func_get_args() );
 	}
 
-	function X_MIN() {
+	static function X_MIN() {
 		return min( func_get_args() );
 	}
 
-	function X_OR() {
+	static function X_OR() {
 		for ($i = 0;$i < func_num_args();$i++) {
 			if( func_get_arg($i) ) return true;
 		}
 		return false;
 	}
 
-	function X_AND( $a, $b ) {
+	static function X_AND( $a, $b ) {
 		return $a && $b;
 	}
 
-	function X_CONCATENATE() {
+	static function X_CONCATENATE() {
 		$j = '';
 		for ($i = 0;$i < func_num_args();$i++) {
 			$j .= func_get_arg($i);
@@ -135,19 +135,19 @@ class XML_XLS {
 		return $j;
 	}
 
-	function X_MID( $text, $start, $end ) {
+	static function X_MID( $text, $start, $end ) {
 		return substr( $text, $start - 1, $end );
 	}
 
-	function X_ISEVEN( $x ) {
+	static function X_ISEVEN( $x ) {
 		return !( $x & 1 );
 	}
 	
-	function X_ISODD( $x ) {
+	static function X_ISODD( $x ) {
 		return !self::X_ISEVEN( $x );
 	}
 	
-	function X_SUM() {
+	static function X_SUM() {
 		$j = 0;
 		for ($i = 0;$i < func_num_args();$i++) {
 			$j += func_get_arg($i);
@@ -155,7 +155,7 @@ class XML_XLS {
 		return $j;
 	}
 	
-	function X_NOT( $x ) {
+	static function X_NOT( $x ) {
 		return !$x;
 	}
 	
