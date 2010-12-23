@@ -68,10 +68,12 @@ class XXLS {
 		return eval( 'return ' . $expanded . ';' );		
 	}
 
-	public function auto_test( $sheet, $col, $row ) {
+	public function auto_test( $sheet, $col, $row, $expected = null ) {
 		if( !is_numeric($col) ) { $col = self::base_xls_rev( $col ); }
 		
-		$expected = $this->sheet_data[$sheet][$row][$col]['value'];
+		if( $expected === null ) {
+			$expected = $this->sheet_data[$sheet][$row][$col]['value'];
+		}
 		$result = $this->evaluate( $sheet, $col, $row );
 
 
