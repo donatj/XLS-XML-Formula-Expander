@@ -3,6 +3,7 @@
 class XXLS {
 
 	private $sheet_data = array();
+	public $debug = false;
 
 	function __construct( $filename ) {
 		$this->sheet_data = $this->ss_parse( $filename );
@@ -164,7 +165,7 @@ class XXLS {
 
 			$xls_cellname = self::sheet_clean($cur_sheet). "!" . self::base_xls( $cur_col ) . $cur_row . ':' . self::base_xls( $cur_col2 ) . $cur_row2;
 
-			$expanded_formula = str_replace( "///{$match}///", PHP_EOL . str_repeat( "\t", $depth) . ' /* RANGE '.$xls_cellname.' « */ ' . implode(' , ', $finals ) . ' /* » RANGE */ ' . PHP_EOL, $expanded_formula );
+			$expanded_formula = str_replace( "///{$match}///", PHP_EOL . str_repeat( "\t", $depth) . ($this->debug ? ' /* RANGE '.$xls_cellname.' « */ ' : '') . implode(' , ', $finals ) . ($this->debug ? ' /* » RANGE */ ' : '') . PHP_EOL, $expanded_formula );
 
 		}
 
@@ -222,7 +223,7 @@ class XXLS {
 			$xls_cellname = self::sheet_clean($cur_sheet). "!" . self::base_xls( $cur_col ) . $cur_row;
 			$posname = $xls_cellname . ' ' . $depth . ( $temp ? ' value: ' . $cur_selected['value'] : '') . ';';
 
-			$expanded_formula = str_replace( "///{$match}///", PHP_EOL . str_repeat( "\t", $depth) . ' ( /* '. $posname .' « */ ' . $cur_selected[ 'expanded' ] . ' /* » '. $xls_cellname .' */ ) ' . PHP_EOL, $expanded_formula );
+			$expanded_formula = str_replace( "///{$match}///", PHP_EOL . str_repeat( "\t", $depth) . ($this->debug ? ' ( /* '. $posname .' « */ ' : '') . $cur_selected[ 'expanded' ] . ($this->debug ? ' /* » '. $xls_cellname .' */ ) ' : '') . PHP_EOL, $expanded_formula );
 
 		}
 
