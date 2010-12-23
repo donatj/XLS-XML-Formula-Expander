@@ -169,6 +169,8 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 	
 	$expanded_formula = $formula;
 	
+	$expanded_formula = ms_string( $expanded_formula );
+	
 	$RANGE = '/(((?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ()]+)\'!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?):(R((\[(?P<rowrel2>-?\d+)\])|(?P<rowabs2>\d+))?C((\[(?P<colrel2>-?\d+)\])|(?P<colabs2>\d+))?))/si';
 	
 	preg_match_all($RANGE, $expanded_formula, $matches);
@@ -402,4 +404,26 @@ function get_local_exp_part( $equat, $init_pos, $exp = false, &$data = null ) {
 	
 	return $part;
 
+}
+
+function ms_string( $formula ) {	
+	if( strpos($formula,'""') ) {
+		for( $i = 0; $i <= strlen( $formula ); $i++ ) {
+			if( $str_init && $formula[$i] == '"' ) {
+				if( $formula[$i + 1] != '"' ) {
+					$str_init = false;
+				}else{
+					$str .= '\\"';
+					$i += 2;
+				}
+			}else{
+				if( !$str_init && $formula[$i] == '"' ) {
+					$str_init = true;
+				}
+			}
+			$str .= $formula[$i];
+		}		
+		return $str;	
+	}
+	return $formula;
 }
