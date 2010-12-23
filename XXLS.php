@@ -144,8 +144,9 @@ class XXLS {
 			return $this->sheet_data[ $sheet ][ $row_index ][ $col_index ]['expanded'];
 		}
 		
+		$debug_tab = $this->debug ? str_repeat( "\t", $depth) : '';
+		
 		$expanded_formula = $formula;
-
 		$expanded_formula = self::ms_string( $expanded_formula );
 
 		$RANGE = '/(((?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ()]+)\'!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?):(R((\[(?P<rowrel2>-?\d+)\])|(?P<rowabs2>\d+))?C((\[(?P<colrel2>-?\d+)\])|(?P<colabs2>\d+))?))/si';
@@ -219,7 +220,7 @@ class XXLS {
 
 			$xls_cellname = self::sheet_clean($cur_sheet). "!" . self::base_xls( $cur_col ) . $cur_row . ':' . self::base_xls( $cur_col2 ) . $cur_row2;
 
-			$expanded_formula = str_replace( "///{$match}///", PHP_EOL . str_repeat( "\t", $depth) . ($this->debug ? ' /* RANGE '.$xls_cellname.' « */ ' : '') . implode(' , ', $finals ) . ($this->debug ? ' /* » RANGE */ ' : '') . PHP_EOL, $expanded_formula );
+			$expanded_formula = str_replace( "///{$match}///", PHP_EOL . $debug_tab . ($this->debug ? ' /* RANGE '.$xls_cellname.' « */ ' : ' ') . implode(' , ', $finals ) . ($this->debug ? ' /* » RANGE */ ' : ' ') . PHP_EOL, $expanded_formula );
 
 		}
 
@@ -277,7 +278,7 @@ class XXLS {
 			$xls_cellname = self::sheet_clean($cur_sheet). "!" . self::base_xls( $cur_col ) . $cur_row;
 			$posname = $xls_cellname . ' ' . $depth . ( $temp ? ' value: ' . $cur_selected['value'] : '') . ';';
 
-			$expanded_formula = str_replace( "///{$match}///", PHP_EOL . str_repeat( "\t", $depth) . ($this->debug ? ' ( /* '. $posname .' « */ ' : '') . $cur_selected[ 'expanded' ] . ($this->debug ? ' /* » '. $xls_cellname .' */ ) ' : '') . PHP_EOL, $expanded_formula );
+			$expanded_formula = str_replace( "///{$match}///", PHP_EOL . $debug_tab . ($this->debug ? ' ( /* '. $posname .' « */ ' : ' ( ') . $cur_selected[ 'expanded' ] . ($this->debug ? ' /* » '. $xls_cellname .' */ ) ' : ' ) ') . PHP_EOL, $expanded_formula );
 
 		}
 
