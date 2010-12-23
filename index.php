@@ -87,7 +87,7 @@ function auto_test( $sheet, $col, $row ) {
 	flush();
 }
 
-class XML_XLS {
+class XXLS_METHODS {
 	static function X_IF( $bool, $a, $b = 0 ) {
 		if( $bool ) {
 			return $a;
@@ -309,7 +309,7 @@ function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 	$expanded_formula = preg_replace('/PI\(\)/i', pi(), $expanded_formula);
 	
 	//Functions
-	$expanded_formula = preg_replace('/([A-Z]{1,})\(/six', ' XML_XLS::X_\1 ( ', $expanded_formula);
+	$expanded_formula = preg_replace('/([A-Z]{1,})\(/six', ' XXLS_METHODS::X_\1 ( ', $expanded_formula);
 	$expanded_formula = preg_replace('/(?<![=])=(?![=])/six', '==', $expanded_formula);
 	
 	//Power Expansion
