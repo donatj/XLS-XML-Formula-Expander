@@ -99,7 +99,7 @@ class XXLS {
 	* @param int $row
 	* @param mixed $expected
 	*/
-	public function auto_test( $sheet, $col, $row, $expected = null ) {
+	public function celltest( $sheet, $col, $row, $expected = null ) {
 		if( !is_numeric($col) ) { $col = self::base_xls_rev( $col ); }
 		
 		if( $expected === null ) {
