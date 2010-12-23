@@ -55,16 +55,12 @@ class XXLS {
 					$formula = trim($cell->getAttribute( 'ss:Formula' ), ' =');
 
 					if( $datas = $cell->getElementsByTagName('Data') ) {
-						$xd =  array( 
-						'value' => $datas->item(0)->nodeValue,
-						'formula' => $formula,
-						);
+						$xd['value'] = $datas->item(0)->nodeValue;
 					}else{
-						$xd =  array( 
-						'value' => $cell->nodeValue,
-						'formula' => $formula,
-						);	
+						$xd['value'] = $cell->nodeValue;
 					}
+					
+					$xd['formula'] = $formula ? $formula : null;
 
 					if( strlen( $xd['value'] ) || strlen( $xd['formula'] ) ) {
 						$spreadsheet_data[$sheetname][ $row_index ][ $index ] = $xd;
