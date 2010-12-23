@@ -58,15 +58,22 @@ class XXLS {
 		}
 		return $spreadsheet_data;
 	}
-
-	function auto_test( $sheet, $col, $row ) {
+	
+	public function evaluate( $sheet, $col, $row ) {
 		if( !is_numeric($col) ) { $col = self::base_xls_rev( $col ); }
-
+		
 		$expanded = $this->expand_eq( $this->sheet_data[$sheet][$row][$col]['formula'], $row, $col, $sheet );
 		extract( $GLOBALS['xbob'] );
-		$expected = $this->sheet_data[$sheet][$row][$col]['value'];
 
-		$result = eval( 'return ' . $expanded . ';' );
+		return eval( 'return ' . $expanded . ';' );		
+	}
+
+	public function auto_test( $sheet, $col, $row ) {
+		if( !is_numeric($col) ) { $col = self::base_xls_rev( $col ); }
+		
+		$expected = $this->sheet_data[$sheet][$row][$col]['value'];
+		$result = $this->evaluate( $sheet, $col, $row );
+
 
 		echo '<div ';
 		if( $result == $expected ) {
