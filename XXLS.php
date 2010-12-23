@@ -14,6 +14,8 @@
 class XXLS {
 
 	private $sheet_data = array();
+	private $selfhash = '';
+	private $sheethash = '';
 	public $debug = false;
 
 	/**
@@ -22,6 +24,8 @@ class XXLS {
 	*/
 	function __construct( $filename ) {
 		$this->sheet_data = $this->ss_parse( $filename );
+		$this->selfhash  = sha1_file( __FILE__ );
+		$this->sheethash = sha1_file( $filename );
 	}
 
 	/**
