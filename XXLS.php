@@ -91,6 +91,24 @@ class XXLS {
 
 		return eval( 'return ' . $expanded . ';' );		
 	}
+	
+	/**
+	* Coerces a cell to a value or definition
+	* 
+	* @param string $sheet
+	* @param string|int $col
+	* @param int $row
+	* @param string|int|array $value If passed an array replaces entire cell definition with array, otherwise replaces value and clears column
+	*/
+	public function coerce( $sheet, $col, $row, $value ) {
+		if( !is_numeric($col) ) { $col = self::base_xls_rev( $col ); }
+		if( is_array( $value ) ) {
+			$this->sheet_data[$sheet][$row][$col] = $value;
+		}else{
+			$this->sheet_data[$sheet][$row][$col] = array('value' => $value, 'formula' => '');
+		}
+	}
+	
 	/**
 	* Test a cells value either automatically or by expected value
 	* 
