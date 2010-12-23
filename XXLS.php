@@ -143,6 +143,11 @@ class XXLS {
 	* @return string
 	*/
 	private function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
+		
+		if( strlen( $this->sheet_data[ $sheet ][ $row_index ][ $col_index ]['expanded'] ) ) {
+			return $this->sheet_data[ $sheet ][ $row_index ][ $col_index ]['expanded'];
+		}
+		
 		$expanded_formula = $formula;
 
 		$expanded_formula = self::ms_string( $expanded_formula );
@@ -299,6 +304,8 @@ class XXLS {
 			$exp  = self::get_local_exp_part( $expanded_formula, $x, true, $data_e );
 			$expanded_formula = substr( $expanded_formula, 0, $data_b['end'] ) . ' pow ( ' . $base . ' , ' . $exp . ' ) ' . substr( $expanded_formula, $data_e['end'] + 1 );
 		}
+		
+		$this->sheet_data[ $sheet ][ $row_index ][ $col_index ]['expanded'] = $expanded_formula;
 
 		file_put_contents( 'cache/' . md5( json_encode( array(  $row_index, $col_index, $sheet ) ) ) . '.php', '<?' . PHP_EOL . $expanded_formula );
 
