@@ -1,14 +1,34 @@
 <?php
+/** 
+* 
+* XXLS
+* 
+* A PHP based Excel 2003 XML Parser / Formula Evaluator
+* 
+* @author Jesse G. Donat <donatj@gmail.com>
+* @license http://opensource.org/licenses/mit-license.php
+* @version .8
+* 
+*/
 
 class XXLS {
 
 	private $sheet_data = array();
 	public $debug = false;
 
+	/**
+	* @param string $filename
+	* @return XXLS
+	*/
 	function __construct( $filename ) {
 		$this->sheet_data = $this->ss_parse( $filename );
 	}
 
+	/**
+	* Process an Excel 2003 XML File into an Array
+	* 
+	* @param string $filename
+	*/
 	function ss_parse( $filename ) {
 		$dom = DOMDocument::load( $filename );
 		$Worksheets = $dom->getElementsByTagName( 'Worksheet' );
@@ -59,6 +79,14 @@ class XXLS {
 		return $spreadsheet_data;
 	}
 	
+	/**
+	* Evaluate an Excel Formula
+	* 
+	* @param string $sheet
+	* @param string|int $col
+	* @param int $row
+	* @return mixed
+	*/
 	public function evaluate( $sheet, $col, $row ) {
 		if( !is_numeric($col) ) { $col = self::base_xls_rev( $col ); }
 		
@@ -67,7 +95,14 @@ class XXLS {
 
 		return eval( 'return ' . $expanded . ';' );		
 	}
-
+	/**
+	* Test a cells value either automatically or by expected value
+	* 
+	* @param string $sheet
+	* @param string|int $col
+	* @param int $row
+	* @param mixed $expected
+	*/
 	public function auto_test( $sheet, $col, $row, $expected = null ) {
 		if( !is_numeric($col) ) { $col = self::base_xls_rev( $col ); }
 		
@@ -95,7 +130,19 @@ class XXLS {
 		flush();
 	}
 
-	function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
+	/**
+	* Fully expands an Excel formula
+	* 
+	* @access private
+	* 
+	* @param string $formula
+	* @param int $row_index
+	* @param int $col_index
+	* @param string $sheet
+	* @param int $depth used for recursion
+	* @return string
+	*/
+	private function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 		$expanded_formula = $formula;
 
 		$expanded_formula = self::ms_string( $expanded_formula );
@@ -259,7 +306,12 @@ class XXLS {
 
 	}
 
-
+	/**
+	* Converts Base10 to BaseExcelColumn
+	* 
+	* @param int $number
+	* @return string
+	*/
 	static function base_xls( $number ) {
 		$str = base_convert($number - 1, 10, 26);
 		$str = strtr( $str, '0123456789abcdefghijklmnopq', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
@@ -269,14 +321,35 @@ class XXLS {
 		return $str;
 	}
 
+	/**
+	* Converts BaseExcelColumn to Base10
+	* 
+	* @param string $letter
+	* @return int
+	*/
 	static function base_xls_rev( $letter ) {
 		return strpos('ABCDEFGHIJKLMNOPQRSTUVWXYZ', strtoupper( $letter ) ) + 1;
 	}
 
-	static function sheet_clean( $str ) {
+	/**
+	* Removes non-alpha-numeric characters from sheetnames
+	* 
+	* @param string $str
+	* @return string
+	*/
+	static private function sheet_clean( $str ) {
 		return preg_replace('/[^A-Z]/six', 'X', $str);	
 	}
 
+	/**
+	* Finds parts of a carrot (^) style exponent, half at a time.
+	* 
+	* @param string $equat The equation to search for
+	* @param int $init_pos Initial positon to begin searching for ^
+	* @param bool $exp If true exponent, false base
+	* @param mixed $data by reference information about the found return
+	* @return string
+	*/
 	static private function get_local_exp_part( $equat, $init_pos, $exp = false, &$data = null ) {
 		static $index = 0;
 		$index++;
@@ -338,6 +411,12 @@ class XXLS {
 
 	}
 
+	/**
+	* Converts Microsoft style string, eg "10""" to C style "10\""
+	* 
+	* @param string $formula
+	* @return string
+	*/
 	static private function ms_string( $formula ) {
 		if( strpos($formula,'""') ) {
 			for( $i = 0; $i <= strlen( $formula ); $i++ ) {
@@ -362,6 +441,9 @@ class XXLS {
 
 }
 
+/**
+* Class of static reimplimentation of Excel methods
+*/
 class XXLS_METHODS {
 	static function X_IF( $bool, $a, $b = 0 ) {
 		if( $bool ) {
