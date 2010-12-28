@@ -7,7 +7,7 @@
 * 
 * @author Jesse G. Donat <donatj@gmail.com>
 * @license http://opensource.org/licenses/mit-license.php
-* @version .8
+* @version .9
 * 
 */
 
@@ -109,6 +109,23 @@ class XXLS {
 		}else{
 			$this->sheet_data[$sheet][$row][$col] = array('value' => $value, 'formula' => '');
 		}
+	}
+	
+	/**
+	* Debugging Information about a Cell
+	* 
+	* @todo Further flesh this out
+	* 
+	* @param string $sheet
+	* @param string|int $col
+	* @param int $row
+	* @return array|null
+	*/
+	public function celldebug( $sheet, $col, $row ) {
+		if( !is_numeric($col) ) { $col = self::base_xls_rev( $col ); }
+		echo $this->sheet_data[$sheet][$row][$col]['formula'];
+		$expanded = $this->expand_eq( $this->sheet_data[$sheet][$row][$col]['formula'], $row, $col, $sheet );
+		return $this->sheet_data[$sheet][$row][$col];
 	}
 	
 	/**
