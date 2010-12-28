@@ -16,6 +16,7 @@ class XXLS {
 	private $sheet_data = array();
 	private $selfhash = '';
 	private $sheethash = '';
+	private $staticvals = array();
 	public $debug = false;
 
 	/**
@@ -89,11 +90,8 @@ class XXLS {
 	*/
 	public function evaluate( $sheet, $col, $row ) {
 		if( !is_numeric($col) ) { $col = self::base_xls_rev( $col ); }
-		
 		$expanded = $this->expand_eq( $this->sheet_data[$sheet][$row][$col]['formula'], $row, $col, $sheet );
-		extract( $GLOBALS['xbob'] );
-
-		return eval( 'return ' . $expanded . ';' );		
+		return eval( 'return ' . $expanded . ';' );
 	}
 	
 	/**
@@ -236,9 +234,8 @@ class XXLS {
 					}elseif( strlen($cur_selected['formula']) ){
 						$cur_selected['expanded'] = $this->expand_eq( $cur_selected['formula'], $range_row, $range_col, $cur_sheet, $depth + 1 );
 					}else{
-						$cur_selected['expanded'] = " \$".self::sheet_clean($cur_sheet)."_{$range_row}_{$range_col} ";
-						$GLOBALS[self::sheet_clean($cur_sheet)."_{$range_row}_{$range_col}"] = $cur_selected['value'];
-						$GLOBALS['xbob'][self::sheet_clean($cur_sheet)."_{$range_row}_{$range_col}"] = $cur_selected['value'];
+						$this->staticvals[ self::sheet_clean($cur_sheet) ][$range_row][$range_col] = $cur_selected['value'];
+						$cur_selected['expanded'] = ' ( $this->staticvals[' . self::sheet_clean($cur_sheet) .']['. $range_row .']['. $range_col .'] ) ';
 					}
 
 					$finals[] = $cur_selected['expanded'];
@@ -297,9 +294,8 @@ class XXLS {
 			}elseif( strlen($cur_selected['formula']) ){
 				$cur_selected['expanded'] = $this->expand_eq( $cur_selected['formula'], $cur_row, $cur_col, $cur_sheet, $depth + 1 );
 			}else{
-				$cur_selected['expanded'] = " \$".self::sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col} ";
-				$GLOBALS[self::sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col}"] = $cur_selected['value'];
-				$GLOBALS['xbob'][self::sheet_clean($cur_sheet)."_{$cur_row}_{$cur_col}"] = $cur_selected['value'];
+				$this->staticvals[ self::sheet_clean($cur_sheet) ][$cur_row][$cur_col] = $cur_selected['value'];
+				$cur_selected['expanded'] = ' ( $this->staticvals[' . self::sheet_clean($cur_sheet) .']['. $cur_row .']['. $cur_col .'] ) ';
 				$temp = true;
 			}
 
