@@ -328,7 +328,7 @@ class XXLS {
 
 		//Functions
 		$expanded_formula = preg_replace('/([A-Z]{1,})\(/six', ' XXLS_METHODS::X_\1 ( ', $expanded_formula);
-		$expanded_formula = preg_replace('/(?<![=])=(?![=])/six', '==', $expanded_formula);
+		$expanded_formula = preg_replace('/(?<![<>=])=(?![=])/six', '==', $expanded_formula);
 
 		//Power Expansion
 		$expanded_formula .= ' '; //lazy fix for overflow issue.
