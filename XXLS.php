@@ -60,7 +60,9 @@ class XXLS {
 					$formula = trim($cell->getAttribute( 'ss:Formula' ), ' =');
 
 					if( $datas = $cell->getElementsByTagName('Data') ) {
-						$xd['value'] = $datas->item(0)->nodeValue;
+						if( $datas->item(0) ) {
+							$xd['value'] = $datas->item(0)->nodeValue;
+						}
 					}else{
 						$xd['value'] = $cell->nodeValue;
 					}
