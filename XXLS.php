@@ -554,9 +554,17 @@ class XXLS_METHODS {
 		$x = pow( 10, $precision );
 		return floor( $val * $x ) / $x;
 	}
+	
+	static function X_ROUNDUP( $val, $precision = 0 ) {
+		return self::X_ROUND( $val, $precision );
+	}
 
 	static function X_VALUE( $val ) {
 		return (double)trim($val);
+	}
+	
+	static function X_CEILING( $val ) {
+		return ceil( $val );
 	}
 
 }
