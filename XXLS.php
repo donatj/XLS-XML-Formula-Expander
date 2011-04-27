@@ -140,15 +140,23 @@ class XXLS {
 	*/
 	public function celltest( $sheet, $col, $row, $expected = null ) {
 		if( !is_numeric($col) ) { $col = self::base_xls_rev( $col ); }
+		$err = false;
 		
 		if( $expected === null ) {
 			$expected = $this->sheet_data[$sheet][$row][$col]['value'];
 		}
 		$result = $this->evaluate( $sheet, $col, $row );
 
+		$correct = false;
+		if( is_float( $result ) ) {
+			//only check equality to 13 places as Excel only goes to 14 and the last digit is rounded
+			$correct = number_format($result, 13) == number_format($expected, 13);
+		}else{
+			$correct = $result == $expected;	
+		}
 
 		echo '<div ';
-		if( $result == $expected ) {
+		if( $correct ) {
 			echo 'style="background: #a0b96a">';
 		}else{
 			echo 'style="background: #b96a6a">';
