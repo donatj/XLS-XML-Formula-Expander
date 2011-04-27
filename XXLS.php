@@ -565,8 +565,8 @@ class XXLS_METHODS {
 		return (double)trim($val);
 	}
 	
-	static function X_CEILING( $val ) {
-		return ceil( $val );
+	static function X_CEILING( $val, $sig = 1 ) {
+		return ceil( $val / $sig ) * $sig;
 	}
 
 }
