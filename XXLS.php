@@ -51,7 +51,8 @@ class XXLS {
 				$cells = $row->getElementsByTagName( 'Cell' );
 				$index = 1;
 				foreach( $cells as $cell ) {
-
+					$xd = array();
+					
 					$cind = $cell->getAttribute( 'ss:Index' );
 					if ( $cind != null ) {
 						$index = $cind;
