@@ -468,7 +468,7 @@ class XXLS {
 		$str_init = false;
 		$str = '';
 		if( strpos($formula,'""') ) {
-			for( $i = 0; $i <= strlen( $formula ); $i++ ) {
+			for( $i = 0; $i <= strlen( $formula ) - 1; $i++ ) {
 				if( $str_init && $formula[$i] == '"' ) {
 					if( $formula[$i + 1] != '"' ) {
 						$str_init = false;
