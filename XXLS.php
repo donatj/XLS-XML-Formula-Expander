@@ -70,7 +70,7 @@ class XXLS {
 					
 					$xd['formula'] = $formula ? $formula : null;
 
-					if( strlen( $xd['value'] ) || strlen( $xd['formula'] ) ) {
+					if( (isset($xd['value']) && strlen($xd['value'])) || strlen($xd['formula']) ) {
 						$spreadsheet_data[$sheetname][ $row_index ][ $index ] = $xd;
 					}
 
@@ -187,8 +187,8 @@ class XXLS {
 	* @return string
 	*/
 	private function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
-		
-		if( strlen( $this->sheet_data[ $sheet ][ $row_index ][ $col_index ]['expanded'] ) ) {
+				
+		if( isset($this->sheet_data[ $sheet ][ $row_index ][ $col_index ]['expanded']) ) {
 			return $this->sheet_data[ $sheet ][ $row_index ][ $col_index ]['expanded'];
 		}
 		
@@ -465,6 +465,8 @@ class XXLS {
 	* @return string
 	*/
 	static private function ms_string( $formula ) {
+		$str_init = false;
+		$str = '';
 		if( strpos($formula,'""') ) {
 			for( $i = 0; $i <= strlen( $formula ); $i++ ) {
 				if( $str_init && $formula[$i] == '"' ) {
