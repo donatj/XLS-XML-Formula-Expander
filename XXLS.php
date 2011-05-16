@@ -261,7 +261,7 @@ class XXLS {
 						$cur_selected['expanded'] = $this->expand_eq( $cur_selected['formula'], $range_row, $range_col, $cur_sheet, $depth + 1 );
 					}else{
 						$this->staticvals[ self::sheet_clean($cur_sheet) ][$range_row][$range_col] = $cur_selected['value'];
-						$cur_selected['expanded'] = ' ( $this->staticvals[' . self::sheet_clean($cur_sheet) .']['. $range_row .']['. $range_col .'] ) ';
+						$cur_selected['expanded'] = ' ( $this->staticvals["' . self::sheet_clean($cur_sheet) .'"]['. $range_row .']['. $range_col .'] ) ';
 					}
 
 					$finals[] = $cur_selected['expanded'];
@@ -317,7 +317,7 @@ class XXLS {
 				$cur_selected['expanded'] = $this->expand_eq( $cur_selected['formula'], $cur_row, $cur_col, $cur_sheet, $depth + 1 );
 			}else{
 				$this->staticvals[ self::sheet_clean($cur_sheet) ][$cur_row][$cur_col] = $cur_selected['value'];
-				$cur_selected['expanded'] = ' ( $this->staticvals[' . self::sheet_clean($cur_sheet) .']['. $cur_row .']['. $cur_col .'] ) ';
+				$cur_selected['expanded'] = ' ( $this->staticvals["' . self::sheet_clean($cur_sheet) .'"]['. $cur_row .']['. $cur_col .'] ) ';
 				$temp = true;
 			}
 
