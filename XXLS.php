@@ -257,9 +257,7 @@ class XXLS {
 
 					$cur_selected =& $this->sheet_data[ $cur_sheet ][ $range_row ][ $range_col ];
 
-					if( strlen($cur_selected['expanded']) ) {
-						//
-					}elseif( strlen($cur_selected['formula']) ){
+					if( strlen($cur_selected['formula']) ){
 						$cur_selected['expanded'] = $this->expand_eq( $cur_selected['formula'], $range_row, $range_col, $cur_sheet, $depth + 1 );
 					}else{
 						$this->staticvals[ self::sheet_clean($cur_sheet) ][$range_row][$range_col] = $cur_selected['value'];
@@ -315,11 +313,7 @@ class XXLS {
 
 			$temp = false;
 
-			if( strlen($cur_selected['expanded']) ) {
-				if( strlen($cur_selected['formula']) == 0 ) {
-					$temp = true;
-				}
-			}elseif( strlen($cur_selected['formula']) ){
+			if( strlen($cur_selected['formula']) ){
 				$cur_selected['expanded'] = $this->expand_eq( $cur_selected['formula'], $cur_row, $cur_col, $cur_sheet, $depth + 1 );
 			}else{
 				$this->staticvals[ self::sheet_clean($cur_sheet) ][$cur_row][$cur_col] = $cur_selected['value'];
