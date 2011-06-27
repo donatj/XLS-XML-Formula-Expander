@@ -528,8 +528,11 @@ class XXLS_METHODS {
 		return false;
 	}
 
-	static function X_AND( $a, $b ) {
-		return $a && $b;
+	static function X_AND() {
+		for ($i = 0;$i < func_num_args();$i++) {
+			if( !func_get_arg($i) ) return false;
+		}
+		return true;
 	}
 
 	static function X_CONCATENATE() {
