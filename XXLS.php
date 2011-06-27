@@ -168,7 +168,7 @@ class XXLS {
 		echo $sheet . '!' . self::base_xls( $col ) . $row .  ':	<small>EXP:<em>'.$expected.'</em>	CALC:<em>' . $result . '</em></small>';
 		echo '</pre>';
 		if( $err /*|| !strlen( $result )*/ ) {
-			echo '<div style="border: 1px solid #aaa; max-height: 200px; overflow: auto; background: #eee"><pre>' . $expanded . '</pre></div>';
+			echo '<div style="border: 1px solid #aaa; max-height: 200px; overflow: auto; background: #eee"><pre>' . $this->sheet_data[$sheet][$row][$col]['expanded'] . '</pre></div>';
 		}
 		echo '</div>' . PHP_EOL;
 		flush();
