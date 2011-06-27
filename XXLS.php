@@ -213,7 +213,7 @@ class XXLS {
 		$expanded_formula = $formula;
 		$expanded_formula = self::ms_string( $expanded_formula );
 
-		$RANGE = '/(((?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ()]+)\'!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?):(R((\[(?P<rowrel2>-?\d+)\])|(?P<rowabs2>\d+))?C((\[(?P<colrel2>-?\d+)\])|(?P<colabs2>\d+))?))/si';
+		$RANGE = '/(((?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ()]+)\'!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?):(R((\[(?P<rowrel2>-?\d+)\])|(?P<rowabs2>\d+))?C((\[(?P<colrel2>-?\d+)\])|(?P<colabs2>\d+))?))/i';
 
 		preg_match_all($RANGE, $expanded_formula, $matches);
 		$expanded_formula = preg_replace($RANGE, '///\1///', $expanded_formula);
@@ -288,7 +288,7 @@ class XXLS {
 		// --------------------------------------------------------------------
 
 		//LITTERAL REPLACMENT / EXPANSION
-		$LITTERAL = '/(?<!:)((?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ()]+)\'!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?)(?!:)/si';
+		$LITTERAL = '/(?<!:)((?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ()]+)\'!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?)(?!:)/i';
 
 		preg_match_all($LITTERAL, $expanded_formula, $matches);
 		$expanded_formula = preg_replace($LITTERAL, '///\1///', $expanded_formula);
@@ -343,7 +343,7 @@ class XXLS {
 
 		//Functions
 		$expanded_formula = preg_replace('/([A-Z]{1,})\(/six', ' XXLS_METHODS::X_\1 ( ', $expanded_formula);
-		$expanded_formula = preg_replace('/(?<![!<>=])=(?![=])/six', '==', $expanded_formula);
+		$expanded_formula = preg_replace('/(?<![!<>=])=(?![=])/ix', '==', $expanded_formula);
 		$expanded_formula = preg_replace('/<>/i', '!=', $expanded_formula);
 
 		//Power Expansion
