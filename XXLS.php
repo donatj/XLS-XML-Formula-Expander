@@ -132,6 +132,16 @@ class XXLS {
 	}
 	
 	/**
+	* Evaluate a string within the class's scope for debugging
+	* 
+	* @param string $eval
+	* @return mixed
+	*/
+	public function evaldebug( $eval ) {
+		return eval( 'return ' . $eval . ';' );
+	}
+	
+	/**
 	* Test a cells value either automatically or by expected value
 	* 
 	* @param string $sheet
