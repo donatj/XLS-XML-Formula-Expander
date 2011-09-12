@@ -4,6 +4,7 @@
 * XXLS
 * 
 * A PHP based Excel 2003 XML Parser / Formula Evaluator
+* https://github.com/donatj/XLS-XML-Formula-Expander / http://donatstudios.com
 * 
 * @author Jesse G. Donat <donatj@gmail.com>
 * @license http://opensource.org/licenses/mit-license.php
