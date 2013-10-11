@@ -31,14 +31,21 @@ class XXLS {
 	}
 
 	/**
-	* Process an Excel 2003 XML File into an Array
-	* 
-	* @param string $filename
-	*/
+	 * @param $filename
+	 * @return array|null
+	 */
 	function ss_parse( $filename ) {
-		$dom = DOMDocument::load( $filename );
+		$dom = new DOMDocument();
+		$dom->load( $filename );
+		/**
+		 * @var $Worksheets DOMElement[]
+		 */
 		$Worksheets = $dom->getElementsByTagName( 'Worksheet' );
+		$spreadsheet_data = array();
 		foreach($Worksheets as $Worksheet) {
+			/**
+			 * @var $rows DOMElement[]
+			 */
 			$rows = $Worksheet->getElementsByTagName( 'Row' );
 			$row_index = 1;
 			$sheetname = $Worksheet->getAttribute( 'ss:Name' );
@@ -49,6 +56,9 @@ class XXLS {
 					$row_index = $rind;
 				}
 
+				/**
+				 * @var $cells DOMElement[]
+				 */
 				$cells = $row->getElementsByTagName( 'Cell' );
 				$index = 1;
 				foreach( $cells as $cell ) {
@@ -81,7 +91,7 @@ class XXLS {
 				$row_index++;
 			}
 		}
-		return $spreadsheet_data;
+		return $spreadsheet_data ?: null;
 	}
 	
 	/**
@@ -503,7 +513,7 @@ class XXLS {
 }
 
 /**
-* Class of static reimplimentation of Excel methods
+* Class of static re-implimentation of Excel methods
 */
 class XXLS_METHODS {
 	static function X_IF( $bool, $a, $b = 0 ) {
