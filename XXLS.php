@@ -196,8 +196,10 @@ class XXLS {
 		}
 		$result = $this->evaluate($sheet, $col, $row);
 
-		if( is_float($result) ) {
-			$correct = number_format($result, 13) == number_format($expected, 13);
+		if( preg_match('/^[0-9.]+$/', strval($result) ) ) {
+			$result = number_format(floatval($result), 6);
+			$expected = number_format(floatval($expected), 6);
+			$correct = $result == $expected;
 		} else {
 			$correct = $result == $expected;
 		}
