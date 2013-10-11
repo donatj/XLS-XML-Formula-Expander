@@ -420,7 +420,7 @@ class XXLS {
 
 			$j = ( $exp ? 0 - $i : $i );
 
-			if( !$data && $equat[$init_pos - $j] != ' ' ) {
+			if( !$data && !preg_match('/\s/', $equat[$init_pos - $j]) ) {
 				$data = array( 'pos' => $init_pos - $j, 'char' => $equat[$init_pos - $j], 'index' => $index );
 			}
 
@@ -587,6 +587,10 @@ class XXLS_METHODS {
 	
 	static function X_CEILING( $val, $sig = 1 ) {
 		return ceil( $val / $sig ) * $sig;
+	}
+
+	static function X_SQRT( $val ) {
+		return sqrt($val);
 	}
 
 }
