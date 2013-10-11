@@ -196,10 +196,10 @@ class XXLS {
 		}
 		$result = $this->evaluate($sheet, $col, $row);
 
-		if( preg_match('/^[0-9.]+$/', strval($result) ) ) {
-			$result = number_format(floatval($result), 6);
+		if( preg_match('/^[0-9.]+$/', strval($result)) ) {
+			$result   = number_format(floatval($result), 6);
 			$expected = number_format(floatval($expected), 6);
-			$correct = $result == $expected;
+			$correct  = $result == $expected;
 		} else {
 			$correct = $result == $expected;
 		}
@@ -363,7 +363,7 @@ class XXLS {
 			}
 
 			$xls_cellname = self::sheet_clean($cur_sheet) . "!" . self::base_xls($cur_col) . $cur_row;
-			$posname      = $xls_cellname . ' ' . $depth . ($temp ? ' value: ' . (isset($cur_selected['value']) ?: '') : '') . ';';
+			$posname      = $xls_cellname . ' ' . $depth . ($temp ? ' value: ' . (isset($cur_selected['value']) ? : '') : '') . ';';
 
 			$expanded_formula = str_replace("///{$match}///", PHP_EOL . $debug_tab . ($this->debug ? ' ( /* ' . $posname . ' « */ ' : ' ( ') . $cur_selected['expanded'] . ($this->debug ? ' /* » ' . $xls_cellname . ' */ ) ' : ' ) ') . PHP_EOL, $expanded_formula);
 
@@ -381,7 +381,7 @@ class XXLS {
 		$expanded_formula .= ' '; //lazy fix for overflow issue.
 
 		//#REF! Handling
-		$expanded_formula = str_replace( '#REF!', '((INF))', $expanded_formula );
+		$expanded_formula = str_replace('#REF!', '((INF))', $expanded_formula);
 
 		$x = 0;
 		while( $x = strpos($expanded_formula, '^', $x + 1) ) {
