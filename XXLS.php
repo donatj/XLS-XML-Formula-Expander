@@ -607,4 +607,8 @@ class XXLS_METHODS {
 		return ceil( $val / $sig ) * $sig;
 	}
 
+	static function X_FLOOR( $val, $sig = 1 ) {
+		return floor( $val / $sig ) * $sig;
+	}
+
 }
