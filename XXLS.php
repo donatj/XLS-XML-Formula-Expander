@@ -497,10 +497,6 @@ class XXLS {
 			}
 		}
 
-		if( !isset($data['end']) ) {
-			drop('hot', $data, $equat);
-		}
-
 		return $part;
 
 	}
