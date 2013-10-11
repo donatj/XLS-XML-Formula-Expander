@@ -31,6 +31,13 @@ class XXLS {
 	}
 
 	/**
+	 * @return array|null
+	 */
+	public function getSheetData() {
+		return $this->sheet_data;
+	}
+
+	/**
 	 * @param $filename
 	 * @return array|null
 	 */
@@ -159,6 +166,7 @@ class XXLS {
 	* @param string|int $col
 	* @param int $row
 	* @param mixed $expected
+	* @return array
 	*/
 	public function celltest( $sheet, $col, $row, $expected = null ) {
 		if( !is_numeric($col) ) { $col = self::base_xls_rev( $col ); }
@@ -169,30 +177,30 @@ class XXLS {
 		}
 		$result = $this->evaluate( $sheet, $col, $row );
 
-		$correct = false;
 		if( is_float( $result ) ) {
-			//only check equality to 13 places as Excel only goes to 14 and the last digit is rounded
 			$correct = number_format($result, 13) == number_format($expected, 13);
 		}else{
-			$correct = $result == $expected;	
+			$correct = $result == $expected;
 		}
 
-		echo '<div ';
-		if( $correct ) {
-			echo 'style="background: #a0b96a">';
-		}else{
-			echo 'style="background: #b96a6a">';
-			$err = true;
-		}
-
-		echo '<pre style="display:inline">';
-		echo $sheet . '!' . self::base_xls( $col ) . $row .  ':	<small>EXP:<em>'.$expected.'</em>	CALC:<em>' . $result . '</em></small>';
-		echo '</pre>';
-		if( $err /*|| !strlen( $result )*/ ) {
-			echo '<div style="border: 1px solid #aaa; max-height: 200px; overflow: auto; background: #eee"><pre>' . $this->sheet_data[$sheet][$row][$col]['expanded'] . '</pre></div>';
-		}
-		echo '</div>' . PHP_EOL;
-		flush();
+		return array( 'passing' => $correct, 'expected' => $expected, 'result' => $result, 'expanded' => $this->sheet_data[$sheet][$row][$col]['expanded'] );
+//
+//		echo '<div ';
+//		if( $correct ) {
+//			echo 'style="background: #a0b96a">';
+//		}else{
+//			echo 'style="background: #b96a6a">';
+//			$err = true;
+//		}
+//
+//		echo '<pre style="display:inline">';
+//		echo $sheet . '!' . self::base_xls( $col ) . $row .  ':	<small>EXP:<em>'.$expected.'</em>	CALC:<em>' . $result . '</em></small>';
+//		echo '</pre>';
+//		if( $err /*|| !strlen( $result )*/ ) {
+//			echo '<div style="border: 1px solid #aaa; max-height: 200px; overflow: auto; background: #eee"><pre>' . $this->sheet_data[$sheet][$row][$col]['expanded'] . '</pre></div>';
+//		}
+//		echo '</div>' . PHP_EOL;
+//		flush();
 	}
 
 	/**
