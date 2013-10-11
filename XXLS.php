@@ -21,6 +21,13 @@ class XXLS {
 	public $debug = false;
 
 	/**
+	 * @return array
+	 */
+	public function getStaticvals() {
+		return $this->staticvals;
+	}
+
+	/**
 	 * @param string $filename
 	 * @return XXLS
 	 */
@@ -116,6 +123,7 @@ class XXLS {
 		}
 		$expanded = $this->expand_eq($this->sheet_data[$sheet][$row][$col]['formula'], $row, $col, $sheet);
 
+//		echo 'echo ' . $expanded . ';' . PHP_EOL . PHP_EOL . '# ===' . PHP_EOL . PHP_EOL;
 		return eval('return ' . $expanded . ';');
 	}
 
@@ -181,7 +189,7 @@ class XXLS {
 		if( !is_numeric($col) ) {
 			$col = self::base_xls_rev($col);
 		}
-		$err = false;
+//		$err = false;
 
 		if( $expected === null ) {
 			$expected = $this->sheet_data[$sheet][$row][$col]['value'];
@@ -195,23 +203,7 @@ class XXLS {
 		}
 
 		return array( 'passing' => $correct, 'expected' => $expected, 'result' => $result, 'expanded' => $this->sheet_data[$sheet][$row][$col]['expanded'] );
-//
-//		echo '<div ';
-//		if( $correct ) {
-//			echo 'style="background: #a0b96a">';
-//		}else{
-//			echo 'style="background: #b96a6a">';
-//			$err = true;
-//		}
-//
-//		echo '<pre style="display:inline">';
-//		echo $sheet . '!' . self::base_xls( $col ) . $row .  ':	<small>EXP:<em>'.$expected.'</em>	CALC:<em>' . $result . '</em></small>';
-//		echo '</pre>';
-//		if( $err /*|| !strlen( $result )*/ ) {
-//			echo '<div style="border: 1px solid #aaa; max-height: 200px; overflow: auto; background: #eee"><pre>' . $this->sheet_data[$sheet][$row][$col]['expanded'] . '</pre></div>';
-//		}
-//		echo '</div>' . PHP_EOL;
-//		flush();
+
 	}
 
 	/**
@@ -290,29 +282,33 @@ class XXLS {
 				$cur_col2 = (int)$col_index;
 			}
 
-			$finals = array();
-
+			$rangeContent = ' array( ' . PHP_EOL;
 			for( $range_col = $cur_col; $range_col <= $cur_col2; $range_col++ ) {
+				$rangeContent .= "\tarray(" . PHP_EOL;
 				for( $range_row = $cur_row; $range_row <= $cur_row2; $range_row++ ) {
 
 					$cur_selected =& $this->sheet_data[$cur_sheet][$range_row][$range_col];
 
 					if( strlen($cur_selected['formula']) ) {
-						$cur_selected['expanded'] = $this->expand_eq($cur_selected['formula'], $range_row, $range_col, $cur_sheet, $depth + 1);
+						$cur_selected['expanded'] = "\n/** BOF -- {$range_row}:{$range_col} **/\n" . $this->expand_eq($cur_selected['formula'], $range_row, $range_col, $cur_sheet, $depth + 1) . "\n /** {$range_row}:{$range_col} -- EOF **/\n";
 					} else {
 						$this->staticvals[self::sheet_clean($cur_sheet)][$range_row][$range_col] = $cur_selected['value'];
 
 						$cur_selected['expanded'] = ' ( $this->staticvals["' . self::sheet_clean($cur_sheet) . '"][' . $range_row . '][' . $range_col . '] ) ';
 					}
 
-					$finals[] = $cur_selected['expanded'];
+					$rangeContent .= $cur_selected['expanded'] . "/* {$range_row}:{$range_col}  */, " . PHP_EOL;
 
 				}
+				$rangeContent = rtrim($rangeContent, ', ' . PHP_EOL);
+				$rangeContent .= '),' . PHP_EOL;
 			}
+
+			$rangeContent .= ')';
 
 			$xls_cellname = self::sheet_clean($cur_sheet) . "!" . self::base_xls($cur_col) . $cur_row . ':' . self::base_xls($cur_col2) . $cur_row2;
 
-			$expanded_formula = str_replace("///{$match}///", PHP_EOL . $debug_tab . ($this->debug ? ' /* RANGE ' . $xls_cellname . ' « */ ' : ' ') . implode(' , ', $finals) . ($this->debug ? ' /* » RANGE */ ' : ' ') . PHP_EOL, $expanded_formula);
+			$expanded_formula = str_replace("///{$match}///", PHP_EOL . $debug_tab . ($this->debug ? ' /* RANGE ' . $xls_cellname . ' « */ ' : ' ') . $rangeContent . ($this->debug ? ' /* » RANGE */ ' : ' ') . PHP_EOL, $expanded_formula);
 
 		}
 
@@ -375,7 +371,7 @@ class XXLS {
 		$expanded_formula = preg_replace('/PI\(\)/i', pi(), $expanded_formula);
 
 		//Functions
-		$expanded_formula = preg_replace('/([A-Z]{1,})\(/six', ' XXLS_METHODS::X_\1 ( ', $expanded_formula);
+		$expanded_formula = preg_replace('/([A-Z]{1,})\(/sx', ' XXLS_METHODS::X_\1 ( ', $expanded_formula);
 		$expanded_formula = preg_replace('/(?<![!<>=])=(?![=])/ix', '==', $expanded_formula);
 		$expanded_formula = preg_replace('/<>/i', '!=', $expanded_formula);
 
@@ -501,6 +497,10 @@ class XXLS {
 			}
 		}
 
+		if( !isset($data['end']) ) {
+			drop('hot', $data, $equat);
+		}
+
 		return $part;
 
 	}
@@ -552,16 +552,21 @@ class XXLS_METHODS {
 	}
 
 	static function X_MAX() {
-		return max(func_get_args());
+		$data = self::array_flatten(func_get_args());
+
+		return max($data);
 	}
 
 	static function X_MIN() {
-		return min(func_get_args());
+		$data = self::array_flatten(func_get_args());
+
+		return min($data);
 	}
 
 	static function X_OR() {
-		for( $i = 0; $i < func_num_args(); $i++ ) {
-			if( func_get_arg($i) ) return true;
+		$data = self::array_flatten(func_get_args());
+		foreach( $data as $datum ) {
+			if( $datum ) return true;
 		}
 
 		return false;
@@ -576,9 +581,10 @@ class XXLS_METHODS {
 	}
 
 	static function X_CONCATENATE() {
-		$j = '';
-		for( $i = 0; $i < func_num_args(); $i++ ) {
-			$j .= func_get_arg($i);
+		$data = self::array_flatten(func_get_args());
+		$j    = '';
+		foreach( $data as $k ) {
+			$j .= $k;
 		}
 
 		return $j;
@@ -597,12 +603,9 @@ class XXLS_METHODS {
 	}
 
 	static function X_SUM() {
-		$j = 0;
-		for( $i = 0; $i < func_num_args(); $i++ ) {
-			$j += func_get_arg($i);
-		}
+		$data = self::array_flatten(func_get_args());
 
-		return $j;
+		return array_sum($data);
 	}
 
 	static function X_NOT( $x ) {
@@ -637,6 +640,46 @@ class XXLS_METHODS {
 
 	static function X_SQRT( $val ) {
 		return sqrt($val);
+	}
+
+	static function X_VLOOKUP( $lookup_value, array $table_array, $col_index_num, $range_lookup = true ) {
+
+		$leftmost = reset($table_array);
+
+		$index = null;
+		if( $range_lookup ) {
+			$reverse = array_reverse($leftmost, true);
+			foreach( $reverse as $rIndex => $val ) {
+				if( strval($val) != '' && $val < $lookup_value ) {
+					$index = $rIndex;
+				}
+			}
+		} else {
+			$index = array_search($lookup_value, $leftmost);
+		}
+
+		if( $index === null ) {
+			return null;
+		}
+
+		return $table_array[$col_index_num - 1][$index];
+	}
+
+	/**
+	 * Given an array, find all the values recursively.
+	 *
+	 * @param  array $array             The Array to be Flattened
+	 * @return array|NULL                The resulting array or NULL on failure
+	 */
+	private function array_flatten( $array ) {
+		if( !is_array($array) ) return null;
+		$it    = new RecursiveIteratorIterator(new RecursiveArrayIterator($array));
+		$final = array();
+		foreach( $it as $v ) {
+			$final[] = $v;
+		}
+
+		return $final;
 	}
 
 }
