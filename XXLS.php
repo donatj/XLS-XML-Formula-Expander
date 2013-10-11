@@ -228,12 +228,6 @@ class XXLS {
 
 		$debug_tab = $this->debug ? str_repeat("\t", $depth) : '';
 
-//		$cache_name = 'cache/' . sha1( json_encode( array(  $sheet, $formula, $this->selfhash, $this->sheethash ) ) ) . '.php';
-//		if( file_exists( $cache_name ) ) {
-//			$this->sheet_data[ $sheet ][ $row_index ][ $col_index ]['expanded'] = file_get_contents($cache_name);
-//			return $this->sheet_data[ $sheet ][ $row_index ][ $col_index ]['expanded'];
-//		}
-
 		$expanded_formula = $formula;
 		$expanded_formula = self::ms_string($expanded_formula);
 
@@ -399,9 +393,11 @@ class XXLS {
 
 		$this->sheet_data[$sheet][$row_index][$col_index]['expanded'] = $expanded_formula;
 
-//		file_put_contents( $cache_name, $expanded_formula );
+		//fast mode
+		return var_export(eval('return ' . $expanded_formula . ';'), 'true');
 
-		return $expanded_formula;
+		//slow mode for debugging
+		//return $expanded_formula;
 
 	}
 
