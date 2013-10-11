@@ -1,3 +1,6 @@
 *.xml
 *.xls
 *.xlsx
+/vendor/
+composer.lock
+.idea
