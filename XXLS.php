@@ -352,9 +352,15 @@ class XXLS {
 
 			$temp = false;
 
-			if( strlen($cur_selected['formula']) ) {
+			if( isset($cur_selected['formula']) && strlen($cur_selected['formula']) ) {
 				$cur_selected['expanded'] = $this->expand_eq($cur_selected['formula'], $cur_row, $cur_col, $cur_sheet, $depth + 1);
 			} else {
+
+				if( !isset($cur_selected['value']) ) {
+					$cur_selected['value'] = null;
+					// @tod remove this, its a fix for a BAD spreadsheet equation
+				}
+
 				$this->staticvals[self::sheet_clean($cur_sheet)][$cur_row][$cur_col] = $cur_selected['value'];
 
 				$cur_selected['expanded'] = ' ( $this->staticvals["' . self::sheet_clean($cur_sheet) . '"][' . $cur_row . '][' . $cur_col . '] ) ';
@@ -363,7 +369,7 @@ class XXLS {
 			}
 
 			$xls_cellname = self::sheet_clean($cur_sheet) . "!" . self::base_xls($cur_col) . $cur_row;
-			$posname      = $xls_cellname . ' ' . $depth . ($temp ? ' value: ' . $cur_selected['value'] : '') . ';';
+			$posname      = $xls_cellname . ' ' . $depth . ($temp ? ' value: ' . (isset($cur_selected['value']) ?: '') : '') . ';';
 
 			$expanded_formula = str_replace("///{$match}///", PHP_EOL . $debug_tab . ($this->debug ? ' ( /* ' . $posname . ' « */ ' : ' ( ') . $cur_selected['expanded'] . ($this->debug ? ' /* » ' . $xls_cellname . ' */ ) ' : ' ) ') . PHP_EOL, $expanded_formula);
 
