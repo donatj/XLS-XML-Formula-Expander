@@ -380,6 +380,9 @@ class XXLS {
 		//Power Expansion
 		$expanded_formula .= ' '; //lazy fix for overflow issue.
 
+		//#REF! Handling
+		$expanded_formula = str_replace( '#REF!', '((INF))', $expanded_formula );
+
 		$x = 0;
 		while( $x = strpos($expanded_formula, '^', $x + 1) ) {
 			$base = self::get_local_exp_part($expanded_formula, $x, false, $data_b);
