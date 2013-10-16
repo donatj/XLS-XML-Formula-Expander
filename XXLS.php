@@ -21,13 +21,6 @@ class XXLS {
 	public $debug = false;
 
 	/**
-	 * @return array
-	 */
-	public function getStaticvals() {
-		return $this->staticvals;
-	}
-
-	/**
 	 * @param string $filename
 	 * @return XXLS
 	 */
@@ -45,6 +38,15 @@ class XXLS {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getStaticvals() {
+		return $this->staticvals;
+	}
+
+	/**
+	 * Process an Excel 2003 XML File into an Array
+	 * 
 	 * @param $filename
 	 * @return array|null
 	 */
@@ -106,7 +108,7 @@ class XXLS {
 			}
 		}
 
-		return $spreadsheet_data ? : null;
+		return $spreadsheet_data ? $spreadsheet_data : null;
 	}
 
 	/**
@@ -230,6 +232,7 @@ class XXLS {
 
 		$expanded_formula = $formula;
 		$expanded_formula = self::ms_string($expanded_formula);
+		if ( $expanded_formula == "" ) { $expanded_formula = "RC"; } // make sure staticvals get set
 
 		$RANGE = '/(((?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ()]+)\'!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?):(R((\[(?P<rowrel2>-?\d+)\])|(?P<rowabs2>\d+))?C((\[(?P<colrel2>-?\d+)\])|(?P<colabs2>\d+))?))/i';
 
@@ -293,7 +296,7 @@ class XXLS {
 						$cur_selected['expanded'] = ' ( $this->staticvals["' . self::sheet_clean($cur_sheet) . '"][' . $range_row . '][' . $range_col . '] ) ';
 					}
 
-					$rangeContent .= $cur_selected['expanded'] . "/* {$range_row}:{$range_col}  */, " . PHP_EOL;
+					$rangeContent .= $cur_selected['expanded'] . ($this->debug ? "/* {$range_row}:{$range_col}  */" : ' ') . ", " . PHP_EOL;
 
 				}
 				$rangeContent = rtrim($rangeContent, ', ' . PHP_EOL);
@@ -363,7 +366,7 @@ class XXLS {
 			}
 
 			$xls_cellname = self::sheet_clean($cur_sheet) . "!" . self::base_xls($cur_col) . $cur_row;
-			$posname      = $xls_cellname . ' ' . $depth . ($temp ? ' value: ' . (isset($cur_selected['value']) ? : '') : '') . ';';
+			$posname      = $xls_cellname . ' ' . $depth . ($temp ? ' value: ' . (isset($cur_selected['value']) ? $cur_selected['value'] : '') : '') . ';';
 
 			$expanded_formula = str_replace("///{$match}///", PHP_EOL . $debug_tab . ($this->debug ? ' ( /* ' . $posname . ' « */ ' : ' ( ') . $cur_selected['expanded'] . ($this->debug ? ' /* » ' . $xls_cellname . ' */ ) ' : ' ) ') . PHP_EOL, $expanded_formula);
 
@@ -424,7 +427,12 @@ class XXLS {
 	 * @return int
 	 */
 	static function base_xls_rev( $letter ) {
-		return strpos('ABCDEFGHIJKLMNOPQRSTUVWXYZ', strtoupper($letter)) + 1;
+		$num = 0;
+		$str = strrev( strtoupper($letter) );
+		for( $i = 0; $i < strlen($str); $i++ ) {
+			$num   += (strpos('ABCDEFGHIJKLMNOPQRSTUVWXYZ', $str[$i]) + 1) * pow(26,$i);
+		}
+		return $num;
 	}
 
 	/**
@@ -646,22 +654,22 @@ class XXLS_METHODS {
 	}
 
 	static function X_VLOOKUP( $lookup_value, array $table_array, $col_index_num, $range_lookup = true ) {
-
 		$leftmost = reset($table_array);
 
 		$index = null;
 		if( $range_lookup ) {
 			$reverse = array_reverse($leftmost, true);
 			foreach( $reverse as $rIndex => $val ) {
-				if( strval($val) != '' && $val < $lookup_value ) {
+				if( strval($val) != '' && $val <= $lookup_value ) {
 					$index = $rIndex;
+					break;
 				}
 			}
 		} else {
 			$index = array_search($lookup_value, $leftmost);
 		}
-
-		if( $index === null ) {
+		
+		if( $index === null || $index === false ) {
 			return null;
 		}
 
