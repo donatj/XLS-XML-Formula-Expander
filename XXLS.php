@@ -230,9 +230,9 @@ class XXLS {
 
 		$debug_tab = $this->debug ? str_repeat("\t", $depth) : '';
 
-		$expanded_formula = $formula;
+		$default_formula  = "RC";
+		$expanded_formula = $formula ? $formula : $default_formula;
 		$expanded_formula = self::ms_string($expanded_formula);
-		if ( $expanded_formula == "" ) { $expanded_formula = "RC"; } // make sure staticvals get set
 
 		$RANGE = '/(((?:(?P<sheet>[A-Z]{1,})!|\'(?P<sheet2>[A-Z ()]+)\'!)?R((\[(?P<rowrel>-?\d+)\])|(?P<rowabs>\d+))?C((\[(?P<colrel>-?\d+)\])|(?P<colabs>\d+))?):(R((\[(?P<rowrel2>-?\d+)\])|(?P<rowabs2>\d+))?C((\[(?P<colrel2>-?\d+)\])|(?P<colabs2>\d+))?))/i';
 
