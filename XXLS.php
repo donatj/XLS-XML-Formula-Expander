@@ -108,7 +108,7 @@ class XXLS {
 			}
 		}
 
-		return $spreadsheet_data ? : null;
+		return $spreadsheet_data ? $spreadsheet_data : null;
 	}
 
 	/**
@@ -365,7 +365,7 @@ class XXLS {
 			}
 
 			$xls_cellname = self::sheet_clean($cur_sheet) . "!" . self::base_xls($cur_col) . $cur_row;
-			$posname      = $xls_cellname . ' ' . $depth . ($temp ? ' value: ' . (isset($cur_selected['value']) ? : '') : '') . ';';
+			$posname      = $xls_cellname . ' ' . $depth . ($temp ? ' value: ' . (isset($cur_selected['value']) ? $cur_selected['value'] : '') : '') . ';';
 
 			$expanded_formula = str_replace("///{$match}///", PHP_EOL . $debug_tab . ($this->debug ? ' ( /* ' . $posname . ' « */ ' : ' ( ') . $cur_selected['expanded'] . ($this->debug ? ' /* » ' . $xls_cellname . ' */ ) ' : ' ) ') . PHP_EOL, $expanded_formula);
 
