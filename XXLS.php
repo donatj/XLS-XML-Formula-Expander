@@ -94,6 +94,10 @@ class XXLS {
 					} else {
 						$xd['value'] = $cell->nodeValue;
 					}
+					
+					if( $this->debug > 1 ) {
+						$xd['raw'] = $cell->ownerDocument->saveXML($cell);
+					}
 
 					$xd['formula'] = $formula ? $formula : null;
 
