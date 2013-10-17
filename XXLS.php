@@ -653,22 +653,22 @@ class XXLS_METHODS {
 	}
 
 	static function X_VLOOKUP( $lookup_value, array $table_array, $col_index_num, $range_lookup = true ) {
-
 		$leftmost = reset($table_array);
 
-		$index = null;
+		$index = false;
 		if( $range_lookup ) {
 			$reverse = array_reverse($leftmost, true);
 			foreach( $reverse as $rIndex => $val ) {
-				if( strval($val) != '' && $val < $lookup_value ) {
+				if( strval($val) != '' && $val <= $lookup_value ) {
 					$index = $rIndex;
+					break;
 				}
 			}
 		} else {
 			$index = array_search($lookup_value, $leftmost);
 		}
 
-		if( $index === null ) {
+		if( $index === false ) {
 			return null;
 		}
 
