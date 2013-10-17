@@ -210,7 +210,7 @@ class XXLS {
 			$correct = $result == $expected;
 		}
 
-		return array( 'passing' => $correct, 'expected' => $expected, 'result' => $result, 'expanded' => $this->sheet_data[$sheet][$row][$col]['expanded'] );
+		return array( 'passing' => $correct, 'expected' => $expected, 'result' => $result, 'expanded' => isset($this->sheet_data[$sheet][$row][$col]['expanded']) ? $this->sheet_data[$sheet][$row][$col]['expanded'] : null );
 
 	}
 
@@ -230,6 +230,8 @@ class XXLS {
 
 		if( isset($this->sheet_data[$sheet][$row_index][$col_index]['expanded']) ) {
 			return $this->sheet_data[$sheet][$row_index][$col_index]['expanded'];
+		}elseif( !$formula && isset($this->sheet_data[$sheet][$row_index][$col_index]['value']) ) {
+			return $this->sheet_data[$sheet][$row_index][$col_index]['expanded'] = var_export( $this->sheet_data[$sheet][$row_index][$col_index]['value'], true );
 		}
 
 		$debug_tab = $this->debug ? str_repeat("\t", $depth) : '';
