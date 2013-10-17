@@ -417,7 +417,7 @@ class XXLS {
 	 * @param int $number
 	 * @return string
 	 */
-	static function base_xls( $number ) {
+	public static function base_xls( $number ) {
 		$str = base_convert($number - 1, 10, 26);
 		$str = strtr($str, '0123456789abcdefghijklmnopq', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 		for( $i = 0; $i <= strlen($str) - 2; $i++ ) {
@@ -433,7 +433,7 @@ class XXLS {
 	 * @param string $letter
 	 * @return int
 	 */
-	static function base_xls_rev( $letter ) {
+	public static function base_xls_rev( $letter ) {
 		$num = 0;
 		$str = strrev( strtoupper($letter) );
 		for( $i = 0; $i < strlen($str); $i++ ) {
