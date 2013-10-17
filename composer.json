@@ -15,6 +15,6 @@
 
     },
 	"autoload": {
-		"files": [ "XXLS.php" ]
+		"files": [ "src/XXLS.php", "src/XXLS_METHODS.php" ]
 	}
 }
