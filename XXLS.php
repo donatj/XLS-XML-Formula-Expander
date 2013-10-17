@@ -295,7 +295,7 @@ class XXLS {
 						$cur_selected['expanded'] = ' ( $this->staticvals["' . self::sheet_clean($cur_sheet) . '"][' . $range_row . '][' . $range_col . '] ) ';
 					}
 
-					$rangeContent .= $cur_selected['expanded'] . "/* {$range_row}:{$range_col}  */, " . PHP_EOL;
+					$rangeContent .= $cur_selected['expanded'] . ($this->debug ? "/* {$range_row}:{$range_col}  */" : ' ') . ", " . PHP_EOL;
 
 				}
 				$rangeContent = rtrim($rangeContent, ', ' . PHP_EOL);
