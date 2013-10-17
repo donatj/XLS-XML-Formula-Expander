@@ -424,7 +424,12 @@ class XXLS {
 	 * @return int
 	 */
 	static function base_xls_rev( $letter ) {
-		return strpos('ABCDEFGHIJKLMNOPQRSTUVWXYZ', strtoupper($letter)) + 1;
+		$num = 0;
+		$str = strrev( strtoupper($letter) );
+		for( $i = 0; $i < strlen($str); $i++ ) {
+			$num   += (strpos('ABCDEFGHIJKLMNOPQRSTUVWXYZ', $str[$i]) + 1) * pow(26,$i);
+		}
+		return $num;
 	}
 
 	/**

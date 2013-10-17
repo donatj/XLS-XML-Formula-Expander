@@ -22,6 +22,21 @@ class XXLSTest extends PHPUnit_Framework_TestCase {
 		}
 
 
+ 	}
+
+	public function testBase_xls_rev() {
+
+		$this->assertEquals( 1, XXLS::base_xls_rev('A') );
+		$this->assertEquals( 4, XXLS::base_xls_rev('D') );
+		$this->assertEquals( 4, XXLS::base_xls_rev('d') );
+
+		$this->assertEquals( 26, XXLS::base_xls_rev('Z') );
+		$this->assertEquals( 27, XXLS::base_xls_rev('AA') );
+
+		$this->assertEquals( 52, XXLS::base_xls_rev('AZ') );
+
+		$this->assertEquals( 4670983, XXLS::base_xls_rev('JESSE') );
+
 	}
 
 
