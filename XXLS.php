@@ -21,13 +21,6 @@ class XXLS {
 	public $debug = false;
 
 	/**
-	 * @return array
-	 */
-	public function getStaticvals() {
-		return $this->staticvals;
-	}
-
-	/**
 	 * @param string $filename
 	 * @return XXLS
 	 */
@@ -45,6 +38,15 @@ class XXLS {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getStaticvals() {
+		return $this->staticvals;
+	}
+
+	/**
+	 * Process an Excel 2003 XML File into an Array
+	 * 
 	 * @param $filename
 	 * @return array|null
 	 */
