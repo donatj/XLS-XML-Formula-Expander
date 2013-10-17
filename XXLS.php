@@ -46,7 +46,7 @@ class XXLS {
 
 	/**
 	 * Process an Excel 2003 XML File into an Array
-	 * 
+	 *
 	 * @param $filename
 	 * @return array|null
 	 */
@@ -94,7 +94,7 @@ class XXLS {
 					} else {
 						$xd['value'] = $cell->nodeValue;
 					}
-					
+
 					if( $this->debug > 1 ) {
 						$xd['raw'] = $cell->ownerDocument->saveXML($cell);
 					}
@@ -232,8 +232,8 @@ class XXLS {
 
 		if( isset($cur_cell['expanded']) ) {
 			return $cur_cell['expanded'];
-		}elseif( !$formula && isset($cur_cell['value']) ) {
-			return $cur_cell['expanded'] = var_export( $cur_cell['value'], true );
+		} elseif( !$formula && isset($cur_cell['value']) ) {
+			return $cur_cell['expanded'] = var_export($cur_cell['value'], true);
 		}
 
 		$debug_tab = $this->debug ? str_repeat("\t", $depth) : '';
@@ -435,10 +435,11 @@ class XXLS {
 	 */
 	public static function base_xls_rev( $letter ) {
 		$num = 0;
-		$str = strrev( strtoupper($letter) );
+		$str = strrev(strtoupper($letter));
 		for( $i = 0; $i < strlen($str); $i++ ) {
-			$num   += (strpos('ABCDEFGHIJKLMNOPQRSTUVWXYZ', $str[$i]) + 1) * pow(26,$i);
+			$num += (strpos('ABCDEFGHIJKLMNOPQRSTUVWXYZ', $str[$i]) + 1) * pow(26, $i);
 		}
+
 		return $num;
 	}
 
