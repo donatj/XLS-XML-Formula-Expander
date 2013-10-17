@@ -228,10 +228,12 @@ class XXLS {
 	 */
 	private function expand_eq( $formula, $row_index, $col_index, $sheet, $depth = 0 ) {
 
-		if( isset($this->sheet_data[$sheet][$row_index][$col_index]['expanded']) ) {
-			return $this->sheet_data[$sheet][$row_index][$col_index]['expanded'];
-		}elseif( !$formula && isset($this->sheet_data[$sheet][$row_index][$col_index]['value']) ) {
-			return $this->sheet_data[$sheet][$row_index][$col_index]['expanded'] = var_export( $this->sheet_data[$sheet][$row_index][$col_index]['value'], true );
+		$cur_cell =& $this->sheet_data[$sheet][$row_index][$col_index];
+
+		if( isset($cur_cell['expanded']) ) {
+			return $cur_cell['expanded'];
+		}elseif( !$formula && isset($cur_cell['value']) ) {
+			return $cur_cell['expanded'] = var_export( $cur_cell['value'], true );
 		}
 
 		$debug_tab = $this->debug ? str_repeat("\t", $depth) : '';
@@ -399,7 +401,7 @@ class XXLS {
 			$expanded_formula = substr($expanded_formula, 0, $data_b['end']) . ' pow ( ' . $base . ' , ' . $exp . ' ) ' . substr($expanded_formula, $data_e['end'] + 1);
 		}
 
-		$this->sheet_data[$sheet][$row_index][$col_index]['expanded'] = $expanded_formula;
+		$cur_cell['expanded'] = $expanded_formula;
 
 		//fast mode
 		return var_export(eval('return ' . $expanded_formula . ';'), 'true');
