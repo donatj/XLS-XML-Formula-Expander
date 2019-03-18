@@ -14,15 +14,14 @@
 
 class XXLS {
 
-	private $sheet_data = array();
-	private $selfhash = '';
-	private $sheethash = '';
+	private $sheet_data;
+	private $selfhash;
+	private $sheethash;
 	private $staticvals = array();
 	public $debug = false;
 
 	/**
 	 * @param string $filename
-	 * @return XXLS
 	 */
 	function __construct( $filename ) {
 		$this->sheet_data = $this->ss_parse($filename);
@@ -50,7 +49,7 @@ class XXLS {
 	 * @param $filename
 	 * @return array|null
 	 */
-	function ss_parse( $filename ) {
+	public function ss_parse( $filename ) {
 		$dom = new DOMDocument();
 		$dom->load($filename);
 		/**
@@ -112,7 +111,7 @@ class XXLS {
 			}
 		}
 
-		return $spreadsheet_data ? $spreadsheet_data : null;
+		return $spreadsheet_data ?: null;
 	}
 
 	/**
@@ -202,9 +201,9 @@ class XXLS {
 		}
 		$result = $this->evaluate($sheet, $col, $row);
 
-		if( preg_match('/^[0-9.]+$/', strval($result)) ) {
-			$result   = number_format(floatval($result), 6);
-			$expected = number_format(floatval($expected), 6);
+		if( preg_match('/^[0-9.]+$/', (string)$result) ) {
+			$result   = number_format((float)$result, 6);
+			$expected = number_format((float)$expected, 6);
 			$correct  = $result == $expected;
 		} else {
 			$correct = $result == $expected;
@@ -232,7 +231,9 @@ class XXLS {
 
 		if( isset($cur_cell['expanded']) ) {
 			return $cur_cell['expanded'];
-		} elseif( !$formula && isset($cur_cell['value']) ) {
+		}
+
+		if( !$formula && isset($cur_cell['value']) ) {
 			return $cur_cell['expanded'] = var_export($cur_cell['value'], true);
 		}
 
@@ -328,9 +329,9 @@ class XXLS {
 
 		foreach( $matches[0] as $index => &$match ) {
 
-			if( strlen($matches['sheet'][$index]) > 0 ) {
+			if( $matches['sheet'][$index] != '' ) {
 				$cur_sheet = $matches['sheet'][$index];
-			} elseif( strlen($matches['sheet2'][$index]) > 0 ) {
+			} elseif( $matches['sheet2'][$index] != '' ) {
 				$cur_sheet = $matches['sheet2'][$index];
 			} else {
 				$cur_sheet = $sheet;
@@ -356,7 +357,7 @@ class XXLS {
 
 			$temp = false;
 
-			if( isset($cur_selected['formula']) && strlen($cur_selected['formula']) ) {
+			if( isset($cur_selected['formula']) && $cur_selected['formula'] != '' ) {
 				$cur_selected['expanded'] = $this->expand_eq($cur_selected['formula'], $cur_row, $cur_col, $cur_sheet, $depth + 1);
 			} else {
 
@@ -372,7 +373,7 @@ class XXLS {
 				$temp = true;
 			}
 
-			$xls_cellname = self::sheet_clean($cur_sheet) . "!" . self::base_xls($cur_col) . $cur_row;
+			$xls_cellname = self::sheet_clean($cur_sheet) . '!' . self::base_xls($cur_col) . $cur_row;
 			$posname      = $xls_cellname . ' ' . $depth . ($temp ? ' value: ' . (isset($cur_selected['value']) ? $cur_selected['value'] : '') : '') . ';';
 
 			$expanded_formula = str_replace("///{$match}///", PHP_EOL . $debug_tab . ($this->debug ? ' ( /* ' . $posname . ' « */ ' : ' ( ') . $cur_selected['expanded'] . ($this->debug ? ' /* » ' . $xls_cellname . ' */ ) ' : ' ) ') . PHP_EOL, $expanded_formula);
@@ -380,12 +381,12 @@ class XXLS {
 		}
 
 		//Special PI handling
-		$expanded_formula = preg_replace('/PI\(\)/i', pi(), $expanded_formula);
+		$expanded_formula = preg_replace('/PI\(\)/i', M_PI, $expanded_formula);
 
 		//Functions
-		$expanded_formula = preg_replace('/([A-Z]{1,})\(/sx', ' XXLS_METHODS::X_\1 ( ', $expanded_formula);
-		$expanded_formula = preg_replace('/(?<![!<>=])=(?![=])/ix', '==', $expanded_formula);
-		$expanded_formula = preg_replace('/<>/i', '!=', $expanded_formula);
+		$expanded_formula = preg_replace('/([A-Z]{1,})\(/x', ' XXLS_METHODS::X_\1 ( ', $expanded_formula);
+		$expanded_formula = preg_replace('/(?<![!<>=])=(?![=])/x', '==', $expanded_formula);
+		$expanded_formula = preg_replace('/<>/', '!=', $expanded_formula);
 
 		//Power Expansion
 		$expanded_formula .= ' '; //lazy fix for overflow issue.
@@ -436,7 +437,7 @@ class XXLS {
 	public static function base_xls_rev( $letter ) {
 		$num = 0;
 		$str = strrev(strtoupper($letter));
-		for( $i = 0; $i < strlen($str); $i++ ) {
+		for( $i = 0, $iMax = strlen($str); $i < $iMax; $i++ ) {
 			$num += (strpos('ABCDEFGHIJKLMNOPQRSTUVWXYZ', $str[$i]) + 1) * pow(26, $i);
 		}
 
@@ -449,8 +450,8 @@ class XXLS {
 	 * @param string $str
 	 * @return string
 	 */
-	static private function sheet_clean( $str ) {
-		return preg_replace('/[^A-Z]/six', 'X', $str);
+	private static function sheet_clean( $str ) {
+		return preg_replace('/[^A-Z]/ix', 'X', $str);
 	}
 
 	/**
@@ -462,7 +463,7 @@ class XXLS {
 	 * @param mixed  $data by reference information about the found return
 	 * @return string
 	 */
-	static private function get_local_exp_part( $equat, $init_pos, $exp = false, &$data = null ) {
+	private static function get_local_exp_part( $equat, $init_pos, $exp = false, &$data = null ) {
 		static $index = 0;
 		$index++;
 		$part = '';
@@ -530,7 +531,7 @@ class XXLS {
 	 * @param string $formula
 	 * @return string
 	 */
-	static private function ms_string( $formula ) {
+	private static function ms_string( $formula ) {
 		$str_init = false;
 		$str      = '';
 		if( strpos($formula, '""') ) {
